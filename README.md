@@ -417,6 +417,8 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 Using Oura API data with a Pandas DataFrame is very straightforward:
 
 ```python
+>>> import pandas as pd
+
 >>> sleep = client.get_daily_sleep()
 >>> pd.json_normalize(sleep["data"])
 

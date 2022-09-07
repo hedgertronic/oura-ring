@@ -423,16 +423,16 @@ Using Oura API data with a Pandas DataFrame is very straightforward:
 >>> pd.json_normalize(sleep["data"])
 
           day  score                  timestamp  contributors.deep_sleep  \
-0  2022-09-01     76  2022-09-01T00:00:00+00:00                       99   
-1  2022-09-02     81  2022-09-02T00:00:00+00:00                      100   
+0  2022-09-01     76  2022-09-01T00:00:00+00:00                       99
+1  2022-09-02     81  2022-09-02T00:00:00+00:00                      100
 
    contributors.efficiency  contributors.latency  contributors.rem_sleep  \
-0                       90                    99                      79   
-1                       88                    75                      95   
+0                       90                    99                      79
+1                       88                    75                      95
 
-   contributors.restfulness  contributors.timing  contributors.total_sleep  
-0                        55                   15                        85  
-1                        56                   28                        96  
+   contributors.restfulness  contributors.timing  contributors.total_sleep
+0                        55                   15                        85
+1                        56                   28                        96
 
 [2 rows x 10 columns]
 
@@ -440,28 +440,28 @@ Using Oura API data with a Pandas DataFrame is very straightforward:
 >>> pd.json_normalize(readiness["data"])
 
           day  score  temperature_deviation  temperature_trend_deviation  \
-0  2022-09-01     87                  -0.09                         0.24   
-1  2022-09-02     91                  -0.03                         0.11   
+0  2022-09-01     87                  -0.09                         0.24
+1  2022-09-02     91                  -0.03                         0.11
 
                    timestamp  contributors.activity_balance  \
-0  2022-09-01T00:00:00+00:00                             80   
-1  2022-09-02T00:00:00+00:00                             86   
+0  2022-09-01T00:00:00+00:00                             80
+1  2022-09-02T00:00:00+00:00                             86
 
    contributors.body_temperature  contributors.hrv_balance  \
-0                            100                        84   
-1                            100                        85   
+0                            100                        84
+1                            100                        85
 
   contributors.previous_day_activity  contributors.previous_night  \
-0                               None                           75   
-1                               None                           88   
+0                               None                           75
+1                               None                           88
 
    contributors.recovery_index  contributors.resting_heart_rate  \
-0                          100                              100   
-1                           94                               98   
+0                          100                              100
+1                           94                               98
 
-   contributors.sleep_balance  
-0                          87  
-1                          93  
+   contributors.sleep_balance
+0                          87
+1                          93
 
 [2 rows x 13 columns]
 ```

@@ -147,14 +147,6 @@ tomli = {version = "*", optional = true, markers = "python_full_version <= \"3.1
 toml = ["tomli"]
 
 [[package]]
-name = "darglint"
-version = "1.8.1"
-description = "A utility for ensuring Google-style docstrings stay up to date with the source code."
-category = "dev"
-optional = false
-python-versions = ">=3.6,<4.0"
-
-[[package]]
 name = "dill"
 version = "0.3.5.1"
 description = "serialize all of python"
@@ -848,7 +840,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "3b449ef2d6c6b048abc6a6cc9acf4076ee2c7291159325cecad36827e175f5de"
+content-hash = "33892c1f6f2d2cb18ca85f32f914cdee3d14180bfcd80ac4bf1a4579c260f269"
 
 [metadata.files]
 astroid = [
@@ -966,10 +958,6 @@ coverage = [
     {file = "coverage-6.4.4-cp39-cp39-win_amd64.whl", hash = "sha256:1238b08f3576201ebf41f7c20bf59baa0d05da941b123c6656e42cdb668e9827"},
     {file = "coverage-6.4.4-pp36.pp37.pp38-none-any.whl", hash = "sha256:f67cf9f406cf0d2f08a3515ce2db5b82625a7257f88aad87904674def6ddaec1"},
     {file = "coverage-6.4.4.tar.gz", hash = "sha256:e16c45b726acb780e1e6f88b286d3c10b3914ab03438f32117c4aa52d7f30d58"},
-]
-darglint = [
-    {file = "darglint-1.8.1-py3-none-any.whl", hash = "sha256:5ae11c259c17b0701618a20c3da343a3eb98b3bc4b5a83d31cdd94f5ebdced8d"},
-    {file = "darglint-1.8.1.tar.gz", hash = "sha256:080d5106df149b199822e7ee7deb9c012b49891538f14a11be681044f0bb20da"},
 ]
 dill = [
     {file = "dill-0.3.5.1-py2.py3-none-any.whl", hash = "sha256:33501d03270bbe410c72639b350e941882a8b0fd55357580fbc873fba0c59302"},

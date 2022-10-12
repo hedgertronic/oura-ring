@@ -51,13 +51,13 @@ pat = os.getenv("PERSONAL_ACCESS_TOKEN") or ""
 Once the environment variables are loaded, an `OuraClient` object can be created:
 
 ```python
-# Using a traditional constructor and destructor
 from oura_ring import OuraClient
 
+# Using a traditional constructor
 client = OuraClient(pat)
 ...
 
-# Using a context manager that destructs automatically
+# Using a context manager
 with OuraClient(pat) as client:
     ...
 ```
@@ -175,7 +175,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Daily Readiness
 
-**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_daily_readiness(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
 
 **Payload**:
 
@@ -209,7 +209,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Heart Rate
 
-**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_heart_rate(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
 
 **Payload**:
 
@@ -231,7 +231,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Sleep Periods
 
-**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_sleep_periods(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
 
 **Payload**:
 
@@ -293,7 +293,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Sessions
 
-**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_sessions(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
 
 **Payload**:
 
@@ -326,7 +326,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Tags
 
-**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_tags(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
 
 **Payload**:
 
@@ -351,7 +351,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Workouts
 
-**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_workouts(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
 
 **Payload**:
 

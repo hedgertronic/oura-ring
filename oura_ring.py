@@ -15,17 +15,16 @@ Examples:
         pat = os.getenv("PERSONAL_ACCESS_TOKEN") or ""
 
     Creating a client:
-        import oura_ring as ou
+        from oura_ring import OuraClient
 
-        client = ou.OuraClient(pat)
+        client = OuraClient(pat)
         ...
-        del client
 
-        with ou.OuraClient(pat) as client:
+        with OuraClient(pat) as client:
             ...
 
     Making requests:
-        client = ou.OuraClient(pat)
+        client = OuraClient(pat)
 
         sleep = client.get_daily_sleep()
         activity = client.get_daily_activity()

@@ -52,13 +52,13 @@ Once the environment variables are loaded, an `OuraClient` object can be created
 
 ```python
 # Using a traditional constructor and destructor
-import oura_ring as ou
+from oura_ring import OuraClient
 
-client = ou.OuraClient(pat)
+client = OuraClient(pat)
 ...
 
 # Using a context manager that destructs automatically
-with ou.OuraClient(pat) as client:
+with OuraClient(pat) as client:
     ...
 ```
 

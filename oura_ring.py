@@ -273,7 +273,7 @@ class OuraClient:
                                 "activity_balance": 56,
                                 "body_temperature": 98,
                                 "hrv_balance": 75,
-                                "previous_day_activity": null,
+                                "previous_day_activity": None,
                                 "previous_night": 35,
                                 "recovery_index": 47,
                                 "resting_heart_rate": 94,
@@ -374,7 +374,7 @@ class OuraClient:
                             "heart_rate": {
                                 "interval": 300,
                                 "items": [
-                                    null,
+                                    None,
                                     50,
                                     46,
                                     ...
@@ -384,7 +384,7 @@ class OuraClient:
                             "hrv": {
                                 "interval": 300,
                                 "items": [
-                                    null,
+                                    None,
                                     -102,
                                     -122,
                                     ...
@@ -403,7 +403,7 @@ class OuraClient:
                             "sleep_phase_5_min": "<long sequence of 1|2|3|4>",
                             "sleep_score_delta": 0,
                             "time_in_bed": 30000,
-                            "total_sleep_duration": null,
+                            "total_sleep_duration": None,
                             "type": "long_sleep"
                         },
                         ...
@@ -447,9 +447,9 @@ class OuraClient:
                             "start_datetime": "2021-11-12T12:32:09-08:00",
                             "end_datetime": "2021-11-12T12:40:49-08:00",
                             "type": "rest",
-                            "heart_rate": null,
-                            "heart_rate_variability": null,
-                            "mood": null,
+                            "heart_rate": None,
+                            "heart_rate_variability": None,
+                            "mood": None,
                             "motion_count": {
                                 "interval": 5,
                                 "items": [
@@ -545,7 +545,7 @@ class OuraClient:
                             "distance": 13500.5,
                             "end_datetime": "2021-01-01T01:00:00.000000+00:00",
                             "intensity": "moderate",
-                            "label": null,
+                            "label": None,
                             "source": "manual",
                             "start_datetime": "2021-01-01T01:30:00.000000+00:00"
                         },

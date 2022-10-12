@@ -48,7 +48,7 @@ load_dotenv()
 pat = os.getenv("PERSONAL_ACCESS_TOKEN") or ""
 ```
 
-Once the environment variables are loaded, an `OuraClient` object can created:
+Once the environment variables are loaded, an `OuraClient` object can be created:
 
 ```python
 # Using a traditional constructor and destructor

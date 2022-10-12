@@ -89,327 +89,295 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Daily Sleep
 
-**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, next_token: str = None)`
+**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
 
 **Payload**:
 
 - `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
 - `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
-- `next_token`: Optional pagination token.
 
 **Example Response**:
 
 ```python
-{
-    "data": [
-        {
-            "contributors": {
-                "deep_sleep": 57,
-                "efficiency": 98,
-                "latency": 81,
-                "rem_sleep": 20,
-                "restfulness": 54,
-                "timing": 84,
-                "total_sleep": 60
-            },
-            "day": "2022-07-14",
-            "score": 63,
-            "timestamp": "2022-07-14T00:00:00+00:00"
+[
+    {
+        "contributors": {
+            "deep_sleep": 57,
+            "efficiency": 98,
+            "latency": 81,
+            "rem_sleep": 20,
+            "restfulness": 54,
+            "timing": 84,
+            "total_sleep": 60
         },
-        ...
-    ],
-    "next_token": None
-}
+        "day": "2022-07-14",
+        "score": 63,
+        "timestamp": "2022-07-14T00:00:00+00:00"
+    },
+    ...
+]
 ```
 
 ### Get Daily Activity
 
-**Method**: `get_daily_activity(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, next_token: str = None)`
+**Method**: `get_daily_activity(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
 
 **Payload**:
 
 - `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
 - `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
-- `next_token`: Optional pagination token.
 
 **Example Response**:
 
 ```python
-{
-    "data": [
-        {
-            "class_5_min": "<long sequence of 0|1|2|3|4|5>",
-            "score": 82,
-            "active_calories": 1222,
-            "average_met_minutes": 1.90625,
-            "contributors": {
-                "meet_daily_targets": 43,
-                "move_every_hour": 100,
-                "recovery_time": 100,
-                "stay_active": 98,
-                "training_frequency": 71,
-                "training_volume": 98
-            },
-            "equivalent_walking_distance": 20122,
-            "high_activity_met_minutes": 444,
-            "high_activity_time": 3000,
-            "inactivity_alerts": 0,
-            "low_activity_met_minutes": 117,
-            "low_activity_time": 10020,
-            "medium_activity_met_minutes": 391,
-            "medium_activity_time": 6060,
-            "met": {
-                "interval": 60,
-                "items": [
-                    0.1,
-                    ...
-                ],
-                "timestamp": "2021-11-26T04:00:00.000-08:00"
-            },
-            "meters_to_target": -16200,
-            "non_wear_time": 27480,
-            "resting_time": 18840,
-            "sedentary_met_minutes": 10,
-            "sedentary_time": 21000,
-            "steps": 18430,
-            "target_calories": 350,
-            "target_meters": 7000,
-            "total_calories": 3446,
-            "day": "2021-11-26",
-            "timestamp": "2021-11-26T04:00:00-08:00"
+[
+    {
+        "class_5_min": "<long sequence of 0|1|2|3|4|5>",
+        "score": 82,
+        "active_calories": 1222,
+        "average_met_minutes": 1.90625,
+        "contributors": {
+            "meet_daily_targets": 43,
+            "move_every_hour": 100,
+            "recovery_time": 100,
+            "stay_active": 98,
+            "training_frequency": 71,
+            "training_volume": 98
         },
-        ...
-    ],
-    "next_token": None
-}
+        "equivalent_walking_distance": 20122,
+        "high_activity_met_minutes": 444,
+        "high_activity_time": 3000,
+        "inactivity_alerts": 0,
+        "low_activity_met_minutes": 117,
+        "low_activity_time": 10020,
+        "medium_activity_met_minutes": 391,
+        "medium_activity_time": 6060,
+        "met": {
+            "interval": 60,
+            "items": [
+                0.1,
+                ...
+            ],
+            "timestamp": "2021-11-26T04:00:00.000-08:00"
+        },
+        "meters_to_target": -16200,
+        "non_wear_time": 27480,
+        "resting_time": 18840,
+        "sedentary_met_minutes": 10,
+        "sedentary_time": 21000,
+        "steps": 18430,
+        "target_calories": 350,
+        "target_meters": 7000,
+        "total_calories": 3446,
+        "day": "2021-11-26",
+        "timestamp": "2021-11-26T04:00:00-08:00"
+    },
+    ...
+]
 ```
 
 ### Get Daily Readiness
 
-**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, next_token: str = None)`
+**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
 
 **Payload**:
 
 - `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
 - `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
-- `next_token`: Optional pagination token.
 
 **Example Response**:
 
 ```python
-{
-    "data": [
-        {
-            "contributors": {
-                "activity_balance": 56,
-                "body_temperature": 98,
-                "hrv_balance": 75,
-                "previous_day_activity": null,
-                "previous_night": 35,
-                "recovery_index": 47,
-                "resting_heart_rate": 94,
-                "sleep_balance": 73
-            },
-            "day": "2021-10-27",
-            "score": 66,
-            "temperature_deviation": -0.2,
-            "temperature_trend_deviation": 0.1,
-            "timestamp": "2021-10-27T00:00:00+00:00"
+[
+    {
+        "contributors": {
+            "activity_balance": 56,
+            "body_temperature": 98,
+            "hrv_balance": 75,
+            "previous_day_activity": null,
+            "previous_night": 35,
+            "recovery_index": 47,
+            "resting_heart_rate": 94,
+            "sleep_balance": 73
         },
-        ...
-    ],
-    "next_token": None
-}
+        "day": "2021-10-27",
+        "score": 66,
+        "temperature_deviation": -0.2,
+        "temperature_trend_deviation": 0.1,
+        "timestamp": "2021-10-27T00:00:00+00:00"
+    },
+    ...
+]
 ```
 
 ### Get Heart Rate
 
-**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, next_token: str = None)`
+**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
 
 **Payload**:
 
 - `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
 - `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
-- `next_token`: Optional pagination token.
 
 **Example Response**:
 
 ```python
-{
-    "data": [
-        {
-            "bpm": 60,
-            "source": "sleep",
-            "timestamp": "2021-01-01T01:02:03+00:00"
-        },
-        ...
-    ],
-    "next_token": None
-}
+[
+    {
+        "bpm": 60,
+        "source": "sleep",
+        "timestamp": "2021-01-01T01:02:03+00:00"
+    },
+    ...
+]
 ```
 
 ### Get Sleep Periods
 
-**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, next_token: str = None)`
+**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
 
 **Payload**:
 
 - `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
 - `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
-- `next_token`: Optional pagination token.
 
 **Example Response**:
 
 ```python
-{
-    "data": [
-        {
-            "average_breath": 12.625,
-            "average_heart_rate": 4.25,
-            "average_hrv": 117,
-            "awake_time": 4800,
-            "bedtime_end": "2022-07-12T09:25:14-07:00",
-            "bedtime_start": "2022-07-12T01:05:14-07:00",
-            "day": "2022-07-12",
-            "deep_sleep_duration": 4170,
-            "efficiency": 84,
-            "heart_rate": {
-                "interval": 300,
-                "items": [
-                    null,
-                    50,
-                    46,
-                    ...
-                ],
-                "timestamp": "2022-07-12T01:05:14.000-07:00"
-            },
-            "hrv": {
-                "interval": 300,
-                "items": [
-                    null,
-                    -102,
-                    -122,
-                    ...
-                ],
-                "timestamp": "2022-07-12T01:05:14.000-07:00"
-            },
-            "latency": 540,
-            "light_sleep_duration": 18750,
-            "low_battery_alert": false,
-            "lowest_heart_rate": 48,
-            "movement_30_sec": "<long sequence of 1|2|3>",
-            "period": 0,
-            "readiness_score_delta": 0,
-            "rem_sleep_duration": 2280,
-            "restless_periods": 415,
-            "sleep_phase_5_min": "<long sequence of 1|2|3|4>",
-            "sleep_score_delta": 0,
-            "time_in_bed": 30000,
-            "total_sleep_duration": null,
-            "type": "long_sleep"
+[
+    {
+        "average_breath": 12.625,
+        "average_heart_rate": 4.25,
+        "average_hrv": 117,
+        "awake_time": 4800,
+        "bedtime_end": "2022-07-12T09:25:14-07:00",
+        "bedtime_start": "2022-07-12T01:05:14-07:00",
+        "day": "2022-07-12",
+        "deep_sleep_duration": 4170,
+        "efficiency": 84,
+        "heart_rate": {
+            "interval": 300,
+            "items": [
+                null,
+                50,
+                46,
+                ...
+            ],
+            "timestamp": "2022-07-12T01:05:14.000-07:00"
         },
-        ...
-    ],
-    "next_token": None
-}
+        "hrv": {
+            "interval": 300,
+            "items": [
+                null,
+                -102,
+                -122,
+                ...
+            ],
+            "timestamp": "2022-07-12T01:05:14.000-07:00"
+        },
+        "latency": 540,
+        "light_sleep_duration": 18750,
+        "low_battery_alert": false,
+        "lowest_heart_rate": 48,
+        "movement_30_sec": "<long sequence of 1|2|3>",
+        "period": 0,
+        "readiness_score_delta": 0,
+        "rem_sleep_duration": 2280,
+        "restless_periods": 415,
+        "sleep_phase_5_min": "<long sequence of 1|2|3|4>",
+        "sleep_score_delta": 0,
+        "time_in_bed": 30000,
+        "total_sleep_duration": null,
+        "type": "long_sleep"
+    },
+    ...
+]
 ```
 
 ### Get Sessions
 
-**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, next_token: str = None)`
+**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
 
 **Payload**:
 
 - `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
 - `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
-- `next_token`: Optional pagination token.
 
 **Example Response**:
 
 ```python
-{
-    "data": [
-        {
-            "day": "2021-11-12",
-            "start_datetime": "2021-11-12T12:32:09-08:00",
-            "end_datetime": "2021-11-12T12:40:49-08:00",
-            "type": "rest",
-            "heart_rate": null,
-            "heart_rate_variability": null,
-            "mood": null,
-            "motion_count": {
-                "interval": 5,
-                "items": [
-                    0
-                ],
-                "timestamp": "2021-11-12T12:32:09.000-08:00"
-            }
-        },
-        ...
-    ],
-    "next_token": None
-}
+[
+    {
+        "day": "2021-11-12",
+        "start_datetime": "2021-11-12T12:32:09-08:00",
+        "end_datetime": "2021-11-12T12:40:49-08:00",
+        "type": "rest",
+        "heart_rate": null,
+        "heart_rate_variability": null,
+        "mood": null,
+        "motion_count": {
+            "interval": 5,
+            "items": [
+                0
+            ],
+            "timestamp": "2021-11-12T12:32:09.000-08:00"
+        }
+    },
+    ...
+]
 ```
 
 ### Get Tags
 
-**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, next_token: str = None)`
+**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
 
 **Payload**:
 
 - `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
 - `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
-- `next_token`: Optional pagination token.
 
 **Example Response**:
 
 ```python
-{
-    "data": [
-        {
-            "day": "2021-01-01",
-            "text": "Need coffee",
-            "timestamp": "2021-01-01T01:02:03-08:00",
-            "tags": [
-                "tag_generic_nocaffeine"
-            ]
-        },
-        ...
-    ],
-    "next_token": None
-}
+[
+    {
+        "day": "2021-01-01",
+        "text": "Need coffee",
+        "timestamp": "2021-01-01T01:02:03-08:00",
+        "tags": [
+            "tag_generic_nocaffeine"
+        ]
+    },
+    ...
+]
 ```
 
 ### Get Workouts
 
-**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, next_token: str = None)`
+**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
 
 **Payload**:
 
 - `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
 - `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
-- `next_token`: Optional pagination token.
 
 **Example Response**:
 
 ```python
-{
-    "data": [
-        {
-            "activity": "cycling",
-            "calories": 300,
-            "day": "2021-01-01",
-            "distance": 13500.5,
-            "end_datetime": "2021-01-01T01:00:00.000000+00:00",
-            "intensity": "moderate",
-            "label": null,
-            "source": "manual",
-            "start_datetime": "2021-01-01T01:30:00.000000+00:00"
-        },
-        ...
-    ],
-    "next_token": None
-}
+[
+    {
+        "activity": "cycling",
+        "calories": 300,
+        "day": "2021-01-01",
+        "distance": 13500.5,
+        "end_datetime": "2021-01-01T01:00:00.000000+00:00",
+        "intensity": "moderate",
+        "label": null,
+        "source": "manual",
+        "start_datetime": "2021-01-01T01:30:00.000000+00:00"
+    },
+    ...
+]
 ```
 
 ## Usage With DataFrame
@@ -420,7 +388,7 @@ Using Oura API data with a Pandas DataFrame is very straightforward:
 >>> import pandas as pd
 
 >>> sleep = client.get_daily_sleep()
->>> pd.json_normalize(sleep["data"])
+>>> pd.json_normalize(sleep)
 
           day  score                  timestamp  contributors.deep_sleep  \
 0  2022-09-01     76  2022-09-01T00:00:00+00:00                       99
@@ -437,7 +405,7 @@ Using Oura API data with a Pandas DataFrame is very straightforward:
 [2 rows x 10 columns]
 
 >>> readiness = client.get_daily_readiness()
->>> pd.json_normalize(readiness["data"])
+>>> pd.json_normalize(readiness)
 
           day  score  temperature_deviation  temperature_trend_deviation  \
 0  2022-09-01     87                  -0.09                         0.24

@@ -55,10 +55,7 @@ Once the environment variables are loaded, an `OuraClient` object can be created
 import oura_ring as ou
 
 client = ou.OuraClient(pat)
-
 ...
-
-del client
 
 # Using a context manager that destructs automatically
 with ou.OuraClient(pat) as client:

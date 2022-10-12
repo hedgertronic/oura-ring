@@ -393,7 +393,7 @@ class OuraClient:
                             },
                             "latency": 540,
                             "light_sleep_duration": 18750,
-                            "low_battery_alert": false,
+                            "low_battery_alert": False,
                             "lowest_heart_rate": 48,
                             "movement_30_sec": "<long sequence of 1|2|3>",
                             "period": 0,

@@ -51,13 +51,13 @@ pat = os.getenv("PERSONAL_ACCESS_TOKEN") or ""
 Once the environment variables are loaded, an `OuraClient` object can be created:
 
 ```python
-# Using a traditional constructor and destructor
 from oura_ring import OuraClient
 
+# Using a traditional constructor
 client = OuraClient(pat)
 ...
 
-# Using a context manager that destructs automatically
+# Using a context manager
 with OuraClient(pat) as client:
     ...
 ```

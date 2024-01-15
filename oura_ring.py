@@ -108,6 +108,7 @@ class OuraClient:
             dict[str, list[dict[str, Any]]]: Response JSON data loaded into an object.
                 Example:
                     {
+                        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                         "age": 31,
                         "weight": 74.8,
                         "height": 1.8,
@@ -144,6 +145,7 @@ class OuraClient:
                 Example:
                     [
                         {
+                            "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                             "contributors": {
                                 "deep_sleep": 57,
                                 "efficiency": 98,
@@ -194,6 +196,7 @@ class OuraClient:
                 Example:
                     [
                         {
+                            "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                             "class_5_min": "<long sequence of 0|1|2|3|4|5>",
                             "score": 82,
                             "active_calories": 1222,
@@ -269,6 +272,7 @@ class OuraClient:
                 Example:
                     [
                         {
+                            "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                             "contributors": {
                                 "activity_balance": 56,
                                 "body_temperature": 98,
@@ -362,6 +366,7 @@ class OuraClient:
                 Example:
                     [
                         {
+                            "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                             "average_breath": 12.625,
                             "average_heart_rate": 4.25,
                             "average_hrv": 117,
@@ -443,6 +448,7 @@ class OuraClient:
                 Example:
                     [
                         {
+                            "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                             "day": "2021-11-12",
                             "start_datetime": "2021-11-12T12:32:09-08:00",
                             "end_datetime": "2021-11-12T12:40:49-08:00",
@@ -495,6 +501,7 @@ class OuraClient:
                 Example:
                     [
                         {
+                            "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                             "day": "2021-01-01",
                             "text": "Need coffee",
                             "timestamp": "2021-01-01T01:02:03-08:00",
@@ -539,6 +546,7 @@ class OuraClient:
                 Example:
                     [
                         {
+                            "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                             "activity": "cycling",
                             "calories": 300,
                             "day": "2021-01-01",

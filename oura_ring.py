@@ -124,7 +124,8 @@ class OuraClient:
             self,
             start_date: str | None = None,
             end_date: str | None = None,
-    ) -> list[dict[str, Any]]:
+            document_id: str | None = None,
+    ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Rest Mode Period endpoint.
 
         Returns Oura Rest Mode Period data for the specified Oura user within
@@ -139,6 +140,9 @@ class OuraClient:
                 before `end_date`.
             end_date (str, optional): The latest date for which to get data. Expected
                 in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+            document_id (str, options): Individual document id, listed at "id"
+                in responses.  Allows you to re-access a previous datapoint.
+                If present, start_date and end_date are ignored.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -161,8 +165,32 @@ class OuraClient:
                         },
                         ...
                     ]
+
+            dict[str, Any]: Response JSON data loaded into an object.
+                Example:
+                    {
+                        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                        "end_day": "2019-08-24",
+                        "end_time": "2019-08-24T14:15:22Z",
+                        "episodes": [
+                            {
+                                "tags": [
+                                    "string"
+                                ],
+                                "timestamp": "2019-08-24T14:15:22Z"
+                            }
+                        ],
+                        "start_day": "2019-08-24",
+                        "start_time": "2019-08-24T14:15:22Z"
+                    }
         """
         start, end = self._format_dates(start_date, end_date)
+
+        if document_id:
+            return self._make_request(
+                method="GET",
+                url_slug=f"v2/usercollection/rest_mode_period/{document_id}"
+            )
 
         return self._make_paginated_request(
             method="GET",
@@ -174,7 +202,8 @@ class OuraClient:
             self,
             start_date: str | None = None,
             end_date: str | None = None,
-    ) -> list[dict[str, Any]]:
+            document_id: str | None = None,
+    ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Ring Configuration endpoint.
 
         Returns Oura Ring Configuration data for the specified Oura user within
@@ -189,6 +218,9 @@ class OuraClient:
                 before `end_date`.
             end_date (str, optional): The latest date for which to get data. Expected
                 in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+            document_id (str, options): Individual document id, listed at "id"
+                in responses.  Allows you to re-access a previous datapoint.
+                If present, start_date and end_date are ignored.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -205,8 +237,26 @@ class OuraClient:
                         },
                         ...
                     ]
+
+            dict[str, Any]: Response JSON data loaded into an object.
+                Example:
+                    {
+                        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                        "color": "glossy_black",
+                        "design": "heritage",
+                        "firmware_version": "string",
+                        "hardware_type": "gen1",
+                        "set_up_at": "2019-08-24T14:15:22Z",
+                        "size": 0
+                    }
         """
         start, end = self._format_dates(start_date, end_date)
+
+        if document_id:
+            return self._make_request(
+                method="GET",
+                url_slug=f"v2/usercollection/ring_configuration/{document_id}",
+            )
 
         return self._make_paginated_request(
             method="GET",
@@ -218,7 +268,8 @@ class OuraClient:
             self,
             start_date: str | None = None,
             end_date: str | None = None,
-    ) -> list[dict[str, Any]]:
+            document_id: str | None = None,
+    ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Sleep Time endpoint.
 
         Returns Oura Sleep Time data for the specified Oura user within a given
@@ -233,6 +284,9 @@ class OuraClient:
                 before `end_date`.
             end_date (str, optional): The latest date for which to get data. Expected
                 in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+            document_id (str, options): Individual document id, listed at "id"
+                in responses.  Allows you to re-access a previous datapoint.
+                If present, start_date and end_date are ignored.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -251,8 +305,28 @@ class OuraClient:
                         },
                         ...
                     ]
+
+            dict[str, Any]: Response JSON data loaded into an object.
+                Example:
+                    {
+                        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                        "day": "2019-08-24",
+                        "optimal_bedtime": {
+                            "day_tz": 0,
+                            "end_offset": 0,
+                            "start_offset": 0
+                        },
+                        "recommendation": "improve_efficiency",
+                        "status": "not_enough_nights"
+                    }
         """
         start, end = self._format_dates(start_date, end_date)
+
+        if document_id:
+            return self._make_request(
+                method="GET",
+                url_slug=f"v2/usercollection/sleep_time/{document_id}",
+            )
 
         return self._make_paginated_request(
             method="GET",
@@ -264,7 +338,8 @@ class OuraClient:
         self,
         start_date: str | None = None,
         end_date: str | None = None,
-    ) -> list[dict[str, Any]]:
+        document_id: str | None = None,
+    ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Daily Sleep endpoint.
 
         Returns Oura Daily Sleep data for the specified Oura user within a given
@@ -279,6 +354,9 @@ class OuraClient:
                 before `end_date`.
             end_date (str, optional): The latest date for which to get data. Expected
                 in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+            document_id (str, options): Individual document id, listed at "id"
+                in responses.  Allows you to re-access a previous datapoint.
+                If present, start_date and end_date are ignored.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -301,8 +379,32 @@ class OuraClient:
                         },
                         ...
                     ]
+
+            dict[str, Any]: Response JSON data loaded into an object.
+                Example:
+                    {
+                        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                        "contributors": {
+                            "deep_sleep": 57,
+                            "efficiency": 98,
+                            "latency": 81,
+                            "rem_sleep": 20,
+                            "restfulness": 54,
+                            "timing": 84,
+                            "total_sleep": 60
+                        },
+                        "day": "2022-07-14",
+                        "score": 63,
+                        "timestamp": "2022-07-14T00:00:00+00:00"
+                    }
         """
         start, end = self._format_dates(start_date, end_date)
+
+        if document_id:
+            return self._make_request(
+                method="GET",
+                url_slug=f"v2/usercollection/daily_sleep/{document_id}",
+            )
 
         return self._make_paginated_request(
             method="GET",
@@ -314,7 +416,8 @@ class OuraClient:
             self,
             start_date: str | None = None,
             end_date: str | None = None,
-    ) -> list[dict[str, Any]]:
+            document_id: str | None = None,
+    ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Daily Spo2 endpoint.
 
         Returns Oura Daily Spo2 data for the specified Oura user within a given
@@ -329,6 +432,9 @@ class OuraClient:
                 before `end_date`.
             end_date (str, optional): The latest date for which to get data. Expected
                 in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+            document_id (str, options): Individual document id, listed at "id"
+                in responses.  Allows you to re-access a previous datapoint.
+                If present, start_date and end_date are ignored.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -343,8 +449,24 @@ class OuraClient:
                         },
                         ...
                     ]
+
+            dict[str, Any]: Response JSON data loaded into an object.
+                Example:
+                    {
+                        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                        "day": "2019-08-24",
+                        "spo2_percentage": {
+                            "average": 0
+                        }
+                    }
         """
         start, end = self._format_dates(start_date, end_date)
+
+        if document_id:
+            return self._make_request(
+                method="GET",
+                url_slug=f"v2/usercollection/daily_spo2/{document_id}",
+            )
 
         return self._make_paginated_request(
             method="GET",
@@ -356,7 +478,8 @@ class OuraClient:
         self,
         start_date: str | None = None,
         end_date: str | None = None,
-    ) -> list[dict[str, Any]]:
+        document_id: str | None = None,
+    ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Daily Stress endpoint.
 
         Returns Oura Daily Stress data for the specified Oura user within a given
@@ -375,6 +498,9 @@ class OuraClient:
                 before `end_date`.
             end_date (str, optional): The latest date for which to get data. Expected
                 in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+            document_id (str, options): Individual document id, listed at "id"
+                in responses.  Allows you to re-access a previous datapoint.
+                If present, start_date and end_date are ignored.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -389,8 +515,24 @@ class OuraClient:
                         },
                         ...
                     ]
+
+            dict[str, Any]: Response JSON data loaded into an object.
+                Example:
+                    {
+                        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                        "day": "2019-08-24",
+                        "stress_high": 0,
+                        "recovery_high": 0,
+                        "day_summary": "restored"
+                    }
         """
         start, end = self._format_dates(start_date, end_date)
+
+        if document_id:
+            return self._make_request(
+                method="GET",
+                url_slug=f"v2/usercollection/daily_stress/{document_id}",
+            )
 
         return self._make_paginated_request(
             method="GET",
@@ -402,7 +544,8 @@ class OuraClient:
         self,
         start_date: str | None = None,
         end_date: str | None = None,
-    ) -> list[dict[str, Any]]:
+        document_id: str | None = None,
+    ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Enhanced Tag endpoint.
 
         Returns Oura Enhanced Tag data for the specified Oura user within a given
@@ -420,6 +563,9 @@ class OuraClient:
                 before `end_date`.
             end_date (str, optional): The latest date for which to get data. Expected
                 in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+            document_id (str, options): Individual document id, listed at "id"
+                in responses.  Allows you to re-access a previous datapoint.
+                If present, start_date and end_date are ignored.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -439,6 +585,12 @@ class OuraClient:
         """
         start, end = self._format_dates(start_date, end_date)
 
+        if document_id:
+            return self._make_paginated_request(
+                method="GET",
+                url_slug=f"v2/usercollection/enhanced_tag/{document_id}",
+            )
+
         return self._make_paginated_request(
             method="GET",
             url_slug="v2/usercollection/enhanced_tag",
@@ -449,7 +601,8 @@ class OuraClient:
         self,
         start_date: str | None = None,
         end_date: str | None = None,
-    ) -> list[dict[str, Any]]:
+        document_id: str | None = None,
+    ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Daily Activy endpoint.
 
         Returns Oura Daily Activity data for the specified Oura user within a given
@@ -465,6 +618,9 @@ class OuraClient:
                 before `end_date`.
             end_date (str, optional): The latest date for which to get data. Expected
                 in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+            document_id (str, options): Individual document id, listed at "id"
+                in responses.  Allows you to re-access a previous datapoint.
+                If present, start_date and end_date are ignored.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -514,8 +670,59 @@ class OuraClient:
                         },
                         ...
                     ]
+
+            dict[str, Any]: Response JSON data loaded into an object.
+                Example:
+                    {
+                        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                        "class_5_min": "<long sequence of 0|1|2|3|4|5>",
+                        "score": 82,
+                        "active_calories": 1222,
+                        "average_met_minutes": 1.90625,
+                        "contributors": {
+                            "meet_daily_targets": 43,
+                            "move_every_hour": 100,
+                            "recovery_time": 100,
+                            "stay_active": 98,
+                            "training_frequency": 71,
+                            "training_volume": 98
+                        },
+                        "equivalent_walking_distance": 20122,
+                        "high_activity_met_minutes": 444,
+                        "high_activity_time": 3000,
+                        "inactivity_alerts": 0,
+                        "low_activity_met_minutes": 117,
+                        "low_activity_time": 10020,
+                        "medium_activity_met_minutes": 391,
+                        "medium_activity_time": 6060,
+                        "met": {
+                            "interval": 60,
+                            "items": [
+                                0.1,
+                                ...
+                            ],
+                            "timestamp": "2021-11-26T04:00:00.000-08:00"
+                        },
+                        "meters_to_target": -16200,
+                        "non_wear_time": 27480,
+                        "resting_time": 18840,
+                        "sedentary_met_minutes": 10,
+                        "sedentary_time": 21000,
+                        "steps": 18430,
+                        "target_calories": 350,
+                        "target_meters": 7000,
+                        "total_calories": 3446,
+                        "day": "2021-11-26",
+                        "timestamp": "2021-11-26T04:00:00-08:00"
+                    }
         """
         start, end = self._format_dates(start_date, end_date)
+
+        if document_id:
+            return self._make_request(
+                method="GET",
+                url_slug=f"v2/usercollection/daily_activity/{document_id}",
+            )
 
         return self._make_paginated_request(
             method="GET",
@@ -527,7 +734,8 @@ class OuraClient:
         self,
         start_date: str | None = None,
         end_date: str | None = None,
-    ) -> list[dict[str, Any]]:
+        document_id: str | None = None,
+    ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Daily Readiness endpoint.
 
         Returns Oura Daily Readiness data for the specified Oura user within a given
@@ -541,6 +749,9 @@ class OuraClient:
                 before `end_date`.
             end_date (str, optional): The latest date for which to get data. Expected
                 in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+            document_id (str, options): Individual document id, listed at "id"
+                in responses.  Allows you to re-access a previous datapoint.
+                If present, start_date and end_date are ignored.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -566,8 +777,35 @@ class OuraClient:
                         },
                         ...
                     ]
+
+            dict[str, Any]: Response JSON data loaded into an object.
+                Example:
+                    {
+                        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                        "contributors": {
+                            "activity_balance": 56,
+                            "body_temperature": 98,
+                            "hrv_balance": 75,
+                            "previous_day_activity": None,
+                            "previous_night": 35,
+                            "recovery_index": 47,
+                            "resting_heart_rate": 94,
+                            "sleep_balance": 73
+                        },
+                        "day": "2021-10-27",
+                        "score": 66,
+                        "temperature_deviation": -0.2,
+                        "temperature_trend_deviation": 0.1,
+                        "timestamp": "2021-10-27T00:00:00+00:00"
+                    }
         """
         start, end = self._format_dates(start_date, end_date)
+
+        if document_id:
+            return self._make_request(
+                method="GET",
+                url_slug=f"v2/usercollection/daily_readiness/{document_id}",
+            )
 
         return self._make_paginated_request(
             method="GET",
@@ -620,7 +858,8 @@ class OuraClient:
         self,
         start_date: str | None = None,
         end_date: str | None = None,
-    ) -> list[dict[str, Any]]:
+        document_id: str | None = None,
+    ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Sleep Periods endpoint.
 
         Returns available Oura sleep data for the specified Oura user within a given
@@ -635,6 +874,9 @@ class OuraClient:
                 before `end_date`.
             end_date (str, optional): The latest date for which to get data. Expected
                 in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+            document_id (str, options): Individual document id, listed at "id"
+                in responses.  Allows you to re-access a previous datapoint.
+                If present, start_date and end_date are ignored.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -688,8 +930,63 @@ class OuraClient:
                         },
                         ...
                     ]
+
+            dict[str, Any]: Response JSON data loaded into an object.
+                Example:
+                    {
+                        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                        "average_breath": 12.625,
+                        "average_heart_rate": 4.25,
+                        "average_hrv": 117,
+                        "awake_time": 4800,
+                        "bedtime_end": "2022-07-12T09:25:14-07:00",
+                        "bedtime_start": "2022-07-12T01:05:14-07:00",
+                        "day": "2022-07-12",
+                        "deep_sleep_duration": 4170,
+                        "efficiency": 84,
+                        "heart_rate": {
+                            "interval": 300,
+                            "items": [
+                                None,
+                                50,
+                                46,
+                                ...
+                            ],
+                            "timestamp": "2022-07-12T01:05:14.000-07:00"
+                        },
+                        "hrv": {
+                            "interval": 300,
+                            "items": [
+                                None,
+                                -102,
+                                -122,
+                                ...
+                            ],
+                            "timestamp": "2022-07-12T01:05:14.000-07:00"
+                        },
+                        "latency": 540,
+                        "light_sleep_duration": 18750,
+                        "low_battery_alert": False,
+                        "lowest_heart_rate": 48,
+                        "movement_30_sec": "<long sequence of 1|2|3>",
+                        "period": 0,
+                        "readiness_score_delta": 0,
+                        "rem_sleep_duration": 2280,
+                        "restless_periods": 415,
+                        "sleep_phase_5_min": "<long sequence of 1|2|3|4>",
+                        "sleep_score_delta": 0,
+                        "time_in_bed": 30000,
+                        "total_sleep_duration": None,
+                        "type": "long_sleep"
+                    }
         """
         start, end = self._format_dates(start_date, end_date)
+
+        if document_id:
+            return self._make_request(
+                method="GET",
+                url_slug=f"v2/usercollection/sleep/{document_id}",
+            )
 
         return self._make_paginated_request(
             method="GET",
@@ -701,7 +998,8 @@ class OuraClient:
         self,
         start_date: str | None = None,
         end_date: str | None = None,
-    ) -> list[dict[str, Any]]:
+        document_id: str | None = None,
+    ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Sessions endpoint.
 
         Returns available Oura session data for the specified Oura user within a given
@@ -717,6 +1015,9 @@ class OuraClient:
                 before `end_date`.
             end_date (str, optional): The latest date for which to get data. Expected
                 in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+            document_id (str, options): Individual document id, listed at "id"
+                in responses.  Allows you to re-access a previous datapoint.
+                If present, start_date and end_date are ignored.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -741,8 +1042,33 @@ class OuraClient:
                         },
                         ...
                     ]
+
+            dict[str, Any]: Response JSON data loaded into an object.
+                Example:
+                    {
+                        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                        "day": "2021-11-12",
+                        "start_datetime": "2021-11-12T12:32:09-08:00",
+                        "end_datetime": "2021-11-12T12:40:49-08:00",
+                        "type": "rest",
+                        "heart_rate": None,
+                        "heart_rate_variability": None,
+                        "mood": None,
+                        "motion_count": {
+                            "interval": 5,
+                            "items": [
+                                0
+                            ],
+                            "timestamp": "2021-11-12T12:32:09.000-08:00"
+                        }
         """
         start, end = self._format_dates(start_date, end_date)
+
+        if document_id:
+            return self._make_request(
+                method="GET",
+                url_slug=f"v2/usercollection/session/{document_id}",
+            )
 
         return self._make_paginated_request(
             method="GET",
@@ -754,10 +1080,13 @@ class OuraClient:
         self,
         start_date: str | None = None,
         end_date: str | None = None,
-    ) -> list[dict[str, Any]]:
+        document_id: str | None = None,
+    ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Tags endpoint.
 
         Returns Oura tags data for the specified Oura user within a given timeframe.
+
+        Note: Tag is deprecated. We recommend transitioning to Enhanced Tag.
 
         The Tags data scope includes tags that Oura users enter within the Oura mobile
         app. Tags are a growing list of activities, environment factors, symptoms,
@@ -770,6 +1099,9 @@ class OuraClient:
                 before `end_date`.
             end_date (str, optional): The latest date for which to get data. Expected
                 in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+            document_id (str, options): Individual document id, listed at "id"
+                in responses.  Allows you to re-access a previous datapoint.
+                If present, start_date and end_date are ignored.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -786,8 +1118,26 @@ class OuraClient:
                         },
                         ...
                     ]
+
+            dict[str, Any]: Response JSON data loaded into an object.
+                Example:
+                    {
+                        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                        "day": "2021-01-01",
+                        "text": "Need coffee",
+                        "timestamp": "2021-01-01T01:02:03-08:00",
+                        "tags": [
+                            "tag_generic_nocaffeine"
+                        ]
+                    }
         """
         start, end = self._format_dates(start_date, end_date)
+
+        if document_id:
+            return self._make_request(
+                method="GET",
+                url_slug=f"v2/usercollection/tag/{document_id}",
+            )
 
         return self._make_paginated_request(
             method="GET",
@@ -799,7 +1149,8 @@ class OuraClient:
         self,
         start_date: str | None = None,
         end_date: str | None = None,
-    ) -> list[dict[str, Any]]:
+        document_id: str | None = None,
+    ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Workouts endpoint.
 
         Returns available Oura workout data for the specified Oura user within a given
@@ -815,6 +1166,9 @@ class OuraClient:
                 before `end_date`.
             end_date (str, optional): The latest date for which to get data. Expected
                 in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+            document_id (str, options): Individual document id, listed at "id"
+                in responses.  Allows you to re-access a previous datapoint.
+                If present, start_date and end_date are ignored.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -834,8 +1188,29 @@ class OuraClient:
                         },
                         ...
                     ]
+
+            dict[str, Any]: Response JSON data loaded into an object.
+                Example:
+                    {
+                        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                        "activity": "cycling",
+                        "calories": 300,
+                        "day": "2021-01-01",
+                        "distance": 13500.5,
+                        "end_datetime": "2021-01-01T01:00:00.000000+00:00",
+                        "intensity": "moderate",
+                        "label": None,
+                        "source": "manual",
+                        "start_datetime": "2021-01-01T01:30:00.000000+00:00"
+                    }
         """
         start, end = self._format_dates(start_date, end_date)
+
+        if document_id:
+            return self._make_request(
+                method="GET",
+                url_slug=f"v2/usercollection/workout/{document_id}",
+            )
 
         return self._make_paginated_request(
             method="GET",

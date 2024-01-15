@@ -170,6 +170,48 @@ class OuraClient:
             params={"start_date": start, "end_date": end},
         )
 
+    def get_daily_spo2(
+            self,
+            start_date: str | None = None,
+            end_date: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """Make request to Get Daily Spo2 endpoint.
+
+        Returns Oura Daily Spo2 data for the specified Oura user within a given
+        timeframe.
+
+        The Daily SpO2 (blood oxygenation) routes include daily SpO2 average.
+        Data will only be available for users with a Gen 3 Oura Ring.
+
+        Args:
+            start_date (str, optional): The earliest date for which to get data.
+                Expected in ISO 8601 format (`YYYY-MM-DD`). Defaults to one day
+                before `end_date`.
+            end_date (str, optional): The latest date for which to get data. Expected
+                in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+
+        Returns:
+            list[dict[str, Any]]: Response JSON data loaded into an object.
+                Example:
+                    [
+                        {
+                            "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                            "day": "2019-08-24",
+                            "spo2_percentage": {
+                                "average": 0
+                            }
+                        },
+                        ...
+                    ]
+        """
+        start, end = self._format_dates(start_date, end_date)
+
+        return self._make_paginated_request(
+            method="GET",
+            url_slug="v2/usercollection/daily_spo2",
+            params={"start_date": start, "end_date": end},
+        )
+
     def get_daily_activity(
         self,
         start_date: str | None = None,

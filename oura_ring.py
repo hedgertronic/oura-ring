@@ -258,6 +258,53 @@ class OuraClient:
             params={"start_date": start, "end_date": end},
         )
 
+    def get_enhanced_tag(
+        self,
+        start_date: str | None = None,
+        end_date: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """Make request to Get Enhanced Tag endpoint.
+
+        Returns Oura Enhanced Tag data for the specified Oura user within a given
+        timeframe.
+
+        The Enhanced Tags data scope includes tags that Oura users enter within
+        the Oura mobile app. Enhanced Tags can be added for any lifestyle
+        choice, habit, mood change, or environmental factor an Oura user wants
+        to monitor the effects of. Enhanced Tags also contain context on a
+        tag’s start and end time, whether a tag repeats daily, and comments.
+
+        Args:
+            start_date (str, optional): The earliest date for which to get data.
+                Expected in ISO 8601 format (`YYYY-MM-DD`). Defaults to one day
+                before `end_date`.
+            end_date (str, optional): The latest date for which to get data. Expected
+                in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+
+        Returns:
+            list[dict[str, Any]]: Response JSON data loaded into an object.
+                Example:
+                    [
+                        {
+                            "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                            "tag_type_code": "string",
+                            "start_time": "2019-08-24T14:15:22Z",
+                            "end_time": "2019-08-24T14:15:22Z",
+                            "start_day": "2019-08-24",
+                            "end_day": "2019-08-24",
+                            "comment": "string"
+                        },
+                        ...
+                    ]
+        """
+        start, end = self._format_dates(start_date, end_date)
+
+        return self._make_paginated_request(
+            method="GET",
+            url_slug="v2/usercollection/enhanced_tag",
+            params={"start_date": start, "end_date": end},
+        )
+
     def get_daily_activity(
         self,
         start_date: str | None = None,

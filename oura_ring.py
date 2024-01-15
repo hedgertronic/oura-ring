@@ -38,7 +38,7 @@ Attributes:
 
 from __future__ import annotations
 
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from typing import Any
 
 import requests
@@ -298,8 +298,8 @@ class OuraClient:
 
     def get_heart_rate(
         self,
-        start_date: str | None = None,
-        end_date: str | None = None,
+        start_datetime: str | None = None,
+        end_datetime: str | None = None,
     ) -> list[dict[str, Any]]:
         """Make request to Get Heart Rate endpoint.
 
@@ -311,11 +311,14 @@ class OuraClient:
         data recorded from a Session, see Sessions endpoint.
 
         Args:
-            start_date (str, optional): The earliest date for which to get data.
-                Expected in ISO 8601 format (`YYYY-MM-DD`). Defaults to one day
-                before `end_date`.
-            end_date (str, optional): The latest date for which to get data. Expected
-                in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+            start_datetime (str, optional): The earliest date for which to get data.
+                Expected in ISO 8601 format (`YYYY-MM-DDThh:mm:ss`). Time is optional,
+                will default to 00:00:00. Time zone is also supported. Defaults to
+                one day before `end_date`.
+            end_datetime (str, optional): The latest date for which to get data. Expected
+                in ISO 8601 format (`YYYY-MM-DDThh:mm:ss`). Time is optional, will
+                default to 00:00:00. Time zone is also supported. Defaults to today's
+                date.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -329,12 +332,12 @@ class OuraClient:
                         ...
                     ]
         """
-        start, end = self._format_dates(start_date, end_date)
+        start, end = self._format_datetimes(start_datetime, end_datetime)
 
         return self._make_paginated_request(
             method="GET",
             url_slug="v2/usercollection/heartrate",
-            params={"start_date": start, "end_date": end},
+            params={"start_datetime": start, "end_datetime": end},
         )
 
     def get_sleep_periods(
@@ -609,5 +612,18 @@ class OuraClient:
 
         if start > end:
             raise ValueError(f"Start date greater than end date: {start} > {end}")
+
+        return str(start), str(end)
+
+    def _format_datetimes(
+        self, start_datetime: str | None, end_datetime: str | None
+    ) -> tuple[str, str]:
+        end = datetime.fromisoformat(end_datetime) if end_datetime else datetime.today()
+        start = (
+            datetime.fromisoformat(start_datetime) if start_datetime else end - timedelta(days=1)
+        )
+
+        if start > end:
+            raise ValueError(f"Start datetime greater than end datetime: {start} > {end}")
 
         return str(start), str(end)

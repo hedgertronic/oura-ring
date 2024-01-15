@@ -120,6 +120,56 @@ class OuraClient:
             method="GET", url_slug="v2/usercollection/personal_info"
         )
 
+    def get_rest_mode_period(
+            self,
+            start_date: str | None = None,
+            end_date: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """Make request to Get Rest Mode Period endpoint.
+
+        Returns Oura Rest Mode Period data for the specified Oura user within
+        a given timeframe.
+
+        The Rest Mode scope includes information about rest mode periods. This
+        includes the start, end time and details of the rest mode period.
+
+        Args:
+            start_date (str, optional): The earliest date for which to get data.
+                Expected in ISO 8601 format (`YYYY-MM-DD`). Defaults to one day
+                before `end_date`.
+            end_date (str, optional): The latest date for which to get data. Expected
+                in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+
+        Returns:
+            list[dict[str, Any]]: Response JSON data loaded into an object.
+                Example:
+                    [
+                        {
+                            "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                            "end_day": "2019-08-24",
+                            "end_time": "2019-08-24T14:15:22Z",
+                            "episodes": [
+                                {
+                                    "tags": [
+                                        "string"
+                                    ],
+                                    "timestamp": "2019-08-24T14:15:22Z"
+                                }
+                            ],
+                            "start_day": "2019-08-24",
+                            "start_time": "2019-08-24T14:15:22Z"
+                        },
+                        ...
+                    ]
+        """
+        start, end = self._format_dates(start_date, end_date)
+
+        return self._make_paginated_request(
+            method="GET",
+            url_slug="v2/usercollection/rest_mode_period",
+            params={"start_date": start, "end_date": end},
+        )
+
     def get_daily_sleep(
         self,
         start_date: str | None = None,

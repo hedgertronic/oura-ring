@@ -214,6 +214,52 @@ class OuraClient:
             params={"start_date": start, "end_date": end},
         )
 
+    def get_sleep_time(
+            self,
+            start_date: str | None = None,
+            end_date: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """Make request to Get Sleep Time endpoint.
+
+        Returns Oura Sleep Time data for the specified Oura user within a given
+        timeframe.
+
+        Recommendations for the optimal bedtime window that is calculated based
+        on sleep data.
+
+        Args:
+            start_date (str, optional): The earliest date for which to get data.
+                Expected in ISO 8601 format (`YYYY-MM-DD`). Defaults to one day
+                before `end_date`.
+            end_date (str, optional): The latest date for which to get data. Expected
+                in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+
+        Returns:
+            list[dict[str, Any]]: Response JSON data loaded into an object.
+                Example:
+                    [
+                        {
+                            "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                            "day": "2019-08-24",
+                            "optimal_bedtime": {
+                                "day_tz": 0,
+                                "end_offset": 0,
+                                "start_offset": 0
+                            },
+                            "recommendation": "improve_efficiency",
+                            "status": "not_enough_nights"
+                        },
+                        ...
+                    ]
+        """
+        start, end = self._format_dates(start_date, end_date)
+
+        return self._make_paginated_request(
+            method="GET",
+            url_slug="v2/usercollection/sleep_time",
+            params={"start_date": start, "end_date": end},
+        )
+
     def get_daily_sleep(
         self,
         start_date: str | None = None,

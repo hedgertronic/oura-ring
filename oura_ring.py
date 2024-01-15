@@ -170,6 +170,50 @@ class OuraClient:
             params={"start_date": start, "end_date": end},
         )
 
+    def get_ring_configuration(
+            self,
+            start_date: str | None = None,
+            end_date: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """Make request to Get Ring Configuration endpoint.
+
+        Returns Oura Ring Configuration data for the specified Oura user within
+        a given timeframe.
+
+        The Ring Configuration scope includes information about the user's
+        ring(s). This includes the model, size, color, etc.
+
+        Args:
+            start_date (str, optional): The earliest date for which to get data.
+                Expected in ISO 8601 format (`YYYY-MM-DD`). Defaults to one day
+                before `end_date`.
+            end_date (str, optional): The latest date for which to get data. Expected
+                in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+
+        Returns:
+            list[dict[str, Any]]: Response JSON data loaded into an object.
+                Example:
+                    [
+                        {
+                            "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                            "color": "glossy_black",
+                            "design": "heritage",
+                            "firmware_version": "string",
+                            "hardware_type": "gen1",
+                            "set_up_at": "2019-08-24T14:15:22Z",
+                            "size": 0
+                        },
+                        ...
+                    ]
+        """
+        start, end = self._format_dates(start_date, end_date)
+
+        return self._make_paginated_request(
+            method="GET",
+            url_slug="v2/usercollection/ring_configuration",
+            params={"start_date": start, "end_date": end},
+        )
+
     def get_daily_sleep(
         self,
         start_date: str | None = None,

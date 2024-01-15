@@ -212,6 +212,52 @@ class OuraClient:
             params={"start_date": start, "end_date": end},
         )
 
+    def get_daily_stress(
+        self,
+        start_date: str | None = None,
+        end_date: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """Make request to Get Daily Stress endpoint.
+
+        Returns Oura Daily Stress data for the specified Oura user within a given
+        timeframe.
+
+        The daily stress route includes a summary of the number of minutes the user
+        spends in high stress and high recovery each day. This is a great way to
+        see how your stress and recovery are trending over time. Stress and
+        recovery are mutally exclusive. E.g. one can only be stressed or recovered
+        at any given moement - and cannot be stressed and recovered at the same
+        time.
+
+        Args:
+            start_date (str, optional): The earliest date for which to get data.
+                Expected in ISO 8601 format (`YYYY-MM-DD`). Defaults to one day
+                before `end_date`.
+            end_date (str, optional): The latest date for which to get data. Expected
+                in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+
+        Returns:
+            list[dict[str, Any]]: Response JSON data loaded into an object.
+                Example:
+                    [
+                        {
+                            "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                            "day": "2019-08-24",
+                            "stress_high": 0,
+                            "recovery_high": 0,
+                            "day_summary": "restored"
+                        },
+                        ...
+                    ]
+        """
+        start, end = self._format_dates(start_date, end_date)
+
+        return self._make_paginated_request(
+            method="GET",
+            url_slug="v2/usercollection/daily_stress",
+            params={"start_date": start, "end_date": end},
+        )
+
     def get_daily_activity(
         self,
         start_date: str | None = None,

@@ -603,7 +603,7 @@ class OuraClient:
         end_date: str | None = None,
         document_id: str | None = None,
     ) -> list[dict[str, Any]] | dict[str, Any]:
-        """Make request to Get Daily Activy endpoint.
+        """Make request to Get Daily Activity endpoint.
 
         Returns Oura Daily Activity data for the specified Oura user within a given
         timeframe.

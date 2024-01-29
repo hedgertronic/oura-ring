@@ -209,12 +209,12 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Heart Rate
 
-**Method**: `get_heart_rate(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_heart_rate(start_datetime: str = <end_date - 1 day>, end_datetime: str = <today's date>)`
 
 **Payload**:
 
-- `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
-- `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
+- `start_datetime`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DDThh:mm:ss). Defaults to one day before the `end_datetime` parameter.
+- `end_datetime`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DDThh:mm:ss). Defaults to today's date.
 
 **Example Response**:
 

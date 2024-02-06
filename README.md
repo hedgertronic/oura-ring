@@ -11,10 +11,16 @@ Tools for acquiring and analyzing Oura API data.
 - [API Requests](#api-requests)
   - [Get Personal Info](#get-personal-info)
   - [Get Daily Sleep](#get-daily-sleep)
+  - [Get Daily SpO2](#get-daily-spo2)
+  - [Get Daily Stress](#get-daily-stress)
   - [Get Daily Activity](#get-daily-activity)
   - [Get Daily Readiness](#get-daily-readiness)
+  - [Get Enhanced Tag](#get-enhanced-tag)
   - [Get Heart Rate](#get-heart-rate)
+  - [Get Ring Configuration](#get-ring-configuration)
+  - [Get Rest Mode Period](#get-rest-mode-period)
   - [Get Sleep Periods](#get-sleep-periods)
+  - [Get Sleep Time](#get-sleep-time)
   - [Get Sessions](#get-sessions)
   - [Get Tags](#get-tags)
   - [Get Workouts](#get-workouts)
@@ -76,6 +82,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ```python
 {
+    "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
     "age": 31,
     "weight": 74.8,
     "height": 1.8,
@@ -98,6 +105,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 ```python
 [
     {
+        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
         "contributors": {
             "deep_sleep": 57,
             "efficiency": 98,
@@ -129,6 +137,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 ```python
 [
     {
+        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
         "class_5_min": "<long sequence of 0|1|2|3|4|5>",
         "score": 82,
         "active_calories": 1222,
@@ -187,6 +196,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 ```python
 [
     {
+        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
         "contributors": {
             "activity_balance": 56,
             "body_temperature": 98,
@@ -205,6 +215,33 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
     },
     ...
 ]
+```
+
+### Get Enhanced Tag
+
+**Method**: `get_enhanced_tag(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+
+**Payload**:
+
+- `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
+- `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
+
+**Example Response**:
+
+```python
+[
+    {
+        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+        "tag_type_code": "string",
+        "start_time": "2019-08-24T14:15:22Z",
+        "end_time": "2019-08-24T14:15:22Z",
+        "start_day": "2019-08-24",
+        "end_day": "2019-08-24",
+        "comment": "string"
+    },
+    ...
+]
+
 ```
 
 ### Get Heart Rate
@@ -243,6 +280,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 ```python
 [
     {
+        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
         "average_breath": 12.625,
         "average_heart_rate": 4.25,
         "average_hrv": 117,
@@ -291,6 +329,92 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 ]
 ```
 
+### Get Sleep Time
+
+**Method**: `get_sleep_time(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+
+**Payload**:
+
+- `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
+- `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
+
+**Example Response**:
+
+```python
+[
+    {
+        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+        "day": "2019-08-24",
+        "optimal_bedtime": {
+            "day_tz": 0,
+            "end_offset": 0,
+            "start_offset": 0
+        },
+        "recommendation": "improve_efficiency",
+        "status": "not_enough_nights"
+    },
+    ...
+]
+```
+
+### Get Ring Configuration
+
+**Method**: `get_ring_configuration(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+
+**Payload**:
+
+- `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
+- `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
+
+**Example Response**:
+
+```python
+[
+    {
+        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+        "color": "glossy_black",
+        "design": "heritage",
+        "firmware_version": "string",
+        "hardware_type": "gen1",
+        "set_up_at": "2019-08-24T14:15:22Z",
+        "size": 0
+    },
+    ...
+]
+```
+
+### Get Rest Mode Period
+
+**Method**: `get_rest_mode_period(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+
+**Payload**:
+
+- `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
+- `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
+
+**Example Response**:
+
+```python
+[
+    {
+        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+        "end_day": "2019-08-24",
+        "end_time": "2019-08-24T14:15:22Z",
+        "episodes": [
+            {
+                "tags": [
+                      "string"
+                ],
+                "timestamp": "2019-08-24T14:15:22Z"
+            }
+        ],
+        "start_day": "2019-08-24",
+        "start_time": "2019-08-24T14:15:22Z"
+    },
+    ...
+]
+```
+
 ### Get Sessions
 
 **Method**: `get_sessions(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
@@ -305,6 +429,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 ```python
 [
     {
+        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
         "day": "2021-11-12",
         "start_datetime": "2021-11-12T12:32:09-08:00",
         "end_datetime": "2021-11-12T12:40:49-08:00",
@@ -324,6 +449,54 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 ]
 ```
 
+### Get Daily SpO2
+
+**Method**: `get_daily_spo2(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+
+**Payload**:
+
+- `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
+- `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
+
+**Example Response**:
+
+```python
+[
+    {
+        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+        "day": "2019-08-24",
+        "spo2_percentage": {
+            "average": 0
+        }
+    },
+  ...
+]
+```
+
+### Get Daily Stress
+
+**Method**: `get_daily_stress(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+
+**Payload**:
+
+- `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
+- `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
+
+**Example Response**:
+
+```python
+[
+    {
+        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+        "day": "2019-08-24",
+        "stress_high": 0,
+        "recovery_high": 0,
+        "day_summary": "restored"
+    },
+    ...
+]
+```
+
 ### Get Tags
 
 **Method**: `get_tags(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
@@ -338,6 +511,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 ```python
 [
     {
+        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
         "day": "2021-01-01",
         "text": "Need coffee",
         "timestamp": "2021-01-01T01:02:03-08:00",
@@ -363,6 +537,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 ```python
 [
     {
+        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
         "activity": "cycling",
         "calories": 300,
         "day": "2021-01-01",

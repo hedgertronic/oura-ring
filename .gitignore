@@ -123,3 +123,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# uv / ruff
+.venv/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+__pycache__/
+*.egg-info/
+dist/
+build/

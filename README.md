@@ -15,8 +15,12 @@ Tools for acquiring and analyzing Oura API data.
   - [Get Daily Stress](#get-daily-stress)
   - [Get Daily Activity](#get-daily-activity)
   - [Get Daily Readiness](#get-daily-readiness)
+  - [Get Daily Resilience](#get-daily-resilience)
+  - [Get Daily Cardiovascular Age](#get-daily-cardiovascular-age)
+  - [Get VO2 Max](#get-vo2-max)
   - [Get Enhanced Tag](#get-enhanced-tag)
   - [Get Heart Rate](#get-heart-rate)
+  - [Get Ring Battery Level](#get-ring-battery-level)
   - [Get Ring Configuration](#get-ring-configuration)
   - [Get Rest Mode Period](#get-rest-mode-period)
   - [Get Sleep Periods](#get-sleep-periods)
@@ -32,18 +36,102 @@ The `oura_ring` module can be installed via pip:
 
 `pip install oura-ring`
 
+Or, using [`uv`](https://github.com/astral-sh/uv):
+
+`uv add oura-ring`
+
 ## Getting Started
 
-In order to use the Oura client, you must first generate a [`personal_access_token`](https://cloud.ouraring.com/personal-access-tokens) for your Oura account.
+> **Note**: Personal access tokens were deprecated by Oura in December 2025 — new ones can no longer be created, though previously-issued tokens may still work. New integrations must use OAuth2.
 
-It is best practice to store this value in a `.env` file:
+### OAuth2 (recommended)
+
+Create an application in [Oura's developer portal](https://developer.ouraring.com) to obtain a `client_id` and `client_secret`. Use `OuraAuth` to run the Authorization Code flow:
+
+```python
+from oura_ring import OuraClient, OuraAuth
+
+oauth = OuraAuth(client_id, client_secret)
+
+# 1. Send the user to the authorization URL to grant access.
+url = oauth.authorize_url(
+    redirect_uri="https://yourapp.com/callback",
+    state="<opaque CSRF value>",
+)
+# redirect the user to `url`...
+
+# 2. Oura redirects back to your callback with a `?code=...` query param.
+#    Exchange that code for tokens.
+tokens = oauth.exchange_code(code, redirect_uri="https://yourapp.com/callback")
+
+# 3. Create a client with the access token.
+client = OuraClient(access_token=tokens["access_token"])
+```
+
+When the access token expires, refresh it with the refresh token:
+
+```python
+tokens = oauth.refresh_token(tokens["refresh_token"])
+```
+
+> **Important**: Refresh tokens are **single-use**. The refresh response returns a new `refresh_token` that you must persist — the old one is invalidated, so the next refresh will fail if you don't store the new value.
+
+#### Refreshing on demand
+
+The client does not refresh automatically — it raises `requests.HTTPError` when a token has expired (HTTP 401). Catch that, refresh, persist the rotated tokens, and retry. A long-lived service looks roughly like this:
+
+```python
+import requests
+from oura_ring import OuraClient, OuraAuth
+
+oauth = OuraAuth(client_id, client_secret)
+
+def refresh_and_persist(tokens: dict) -> dict:
+    tokens = oauth.refresh_token(tokens["refresh_token"])
+    save_tokens(tokens)  # your storage — both access_token AND the new refresh_token
+    return tokens
+
+tokens = load_tokens()  # your storage
+try:
+    sleep = OuraClient(access_token=tokens["access_token"]).get_daily_sleep(...)
+except requests.HTTPError as err:
+    if err.response.status_code != 401:
+        raise
+    tokens = refresh_and_persist(tokens)
+    sleep = OuraClient(access_token=tokens["access_token"]).get_daily_sleep(...)
+```
+
+Persisting the *new* `refresh_token` is the part that bites people: skip it and the next refresh fails with a `400`, because Oura invalidated the old one the moment it issued the replacement.
+
+### Constructing a client from a token
+
+`OuraClient` authenticates every request with a bearer token. That token can be an OAuth2 access token or a legacy personal access token, passed either by keyword or positionally:
+
+```python
+from oura_ring import OuraClient
+
+# OAuth2 access token (keyword)
+client = OuraClient(access_token=token)
+
+# Positionally — a legacy personal access token still works here for
+# backwards compatibility.
+client = OuraClient(token)
+
+# Using a context manager
+with OuraClient(token) as client:
+    ...
+```
+
+### Loading a token from the environment
+
+It is best practice to store the token in a `.env` file. The value can be an OAuth2 access token or a legacy personal access token:
 
 ```bash
 # Oura credentials
-PERSONAL_ACCESS_TOKEN="<PERSONAL_ACCESS_TOKEN>"
+OURA_ACCESS_TOKEN="<ACCESS_TOKEN>"
 ```
 
-You can use [`python-dotenv`](https://github.com/theskumar/python-dotenv) to load the enviroment variables for use in code:
+You can use [`python-dotenv`](https://github.com/theskumar/python-dotenv) to load the environment variables for use in code:
 
 ```python
 import os
@@ -51,26 +139,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-pat = os.getenv("PERSONAL_ACCESS_TOKEN") or ""
-```
+token = os.getenv("OURA_ACCESS_TOKEN") or ""
 
-Once the environment variables are loaded, an `OuraClient` object can be created:
-
-```python
-from oura_ring import OuraClient
-
-# Using a traditional constructor
-client = OuraClient(pat)
-...
-
-# Using a context manager
-with OuraClient(pat) as client:
-    ...
+client = OuraClient(token)
 ```
 
 ## API Requests
 
-There are nine different API requests that `OuraClient` can make. Full Oura API v2 documentation can be found on [Oura's website](https://cloud.ouraring.com/v2/docs).
+There are 19 different API requests that `OuraClient` can make. Full Oura API v2 documentation can be found on [Oura's website](https://cloud.ouraring.com/v2/docs).
+
+> **Scope and limitations (by design):** the client returns the API's JSON as-is and raises on HTTP errors (including expired tokens and `429` rate limits) — there is no automatic token refresh or retry built in; use `OuraAuth.refresh_token` to rotate tokens. The optional `fields` (sparse fieldsets) query param and the webhook subscription API are intentionally not exposed.
 
 ### Get Personal Info
 
@@ -93,7 +171,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Daily Sleep
 
-**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_daily_sleep(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, document_id: str | None = None)`
 
 **Payload**:
 
@@ -125,7 +203,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Daily Activity
 
-**Method**: `get_daily_activity(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_daily_activity(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, document_id: str | None = None)`
 
 **Payload**:
 
@@ -184,7 +262,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Daily Readiness
 
-**Method**: `get_daily_readiness(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_daily_readiness(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, document_id: str | None = None)`
 
 **Payload**:
 
@@ -217,9 +295,82 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 ]
 ```
 
+### Get Daily Resilience
+
+**Method**: `get_daily_resilience(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, document_id: str | None = None)`
+
+**Payload**:
+
+- `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
+- `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
+
+**Example Response**:
+
+```python
+[
+    {
+        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+        "day": "2021-10-27",
+        "contributors": {
+            "sleep_recovery": 64.2,
+            "daytime_recovery": 56.8,
+            "stress": 40.1
+        },
+        "level": "solid"
+    },
+    ...
+]
+```
+
+### Get Daily Cardiovascular Age
+
+**Method**: `get_daily_cardiovascular_age(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, document_id: str | None = None)`
+
+**Payload**:
+
+- `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
+- `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
+
+**Example Response**:
+
+```python
+[
+    {
+        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+        "day": "2021-10-27",
+        "vascular_age": 32,
+        "pulse_wave_velocity": 7.2
+    },
+    ...
+]
+```
+
+### Get VO2 Max
+
+**Method**: `get_vo2_max(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, document_id: str | None = None)`
+
+**Payload**:
+
+- `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
+- `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
+
+**Example Response**:
+
+```python
+[
+    {
+        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+        "day": "2021-10-27",
+        "timestamp": "2021-10-27T00:00:00+00:00",
+        "vo2_max": 48
+    },
+    ...
+]
+```
+
 ### Get Enhanced Tag
 
-**Method**: `get_enhanced_tag(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_enhanced_tag(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, document_id: str | None = None)`
 
 **Payload**:
 
@@ -246,12 +397,13 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Heart Rate
 
-**Method**: `get_heart_rate(start_datetime: str = <end_date - 1 day>, end_datetime: str = <today's date>)`
+**Method**: `get_heart_rate(start_datetime: str = <end_datetime - 1 day>, end_datetime: str = <now>, latest: bool | None = None)`
 
 **Payload**:
 
-- `start_datetime`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DDThh:mm:ss). Defaults to one day before the `end_datetime` parameter.
-- `end_datetime`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DDThh:mm:ss). Defaults to today's date.
+- `start_datetime`: The earliest datetime for which to get data. Expected in ISO 8601 format (YYYY-MM-DDThh:mm:ss). Defaults to one day before the `end_datetime` parameter.
+- `end_datetime`: The latest datetime for which to get data. Expected in ISO 8601 format (YYYY-MM-DDThh:mm:ss). Defaults to now.
+- `latest`: If true, request only the most recent sample.
 
 **Example Response**:
 
@@ -260,6 +412,32 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
     {
         "bpm": 60,
         "source": "sleep",
+        "timestamp_unix": 1609462923,
+        "timestamp": "2021-01-01T01:02:03+00:00"
+    },
+    ...
+]
+```
+
+### Get Ring Battery Level
+
+**Method**: `get_ring_battery_level(start_datetime: str = <end_datetime - 1 day>, end_datetime: str = <now>, latest: bool | None = None)`
+
+**Payload**:
+
+- `start_datetime`: The earliest datetime for which to get data. Expected in ISO 8601 format (YYYY-MM-DDThh:mm:ss). Defaults to one day before the `end_datetime` parameter.
+- `end_datetime`: The latest datetime for which to get data. Expected in ISO 8601 format (YYYY-MM-DDThh:mm:ss). Defaults to now.
+- `latest`: If true, request only the most recent sample.
+
+**Example Response**:
+
+```python
+[
+    {
+        "level": 87,
+        "charging": False,
+        "in_charger": False,
+        "timestamp_unix": 1609462923,
         "timestamp": "2021-01-01T01:02:03+00:00"
     },
     ...
@@ -268,7 +446,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Sleep Periods
 
-**Method**: `get_sleep_periods(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_sleep_periods(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, document_id: str | None = None)`
 
 **Payload**:
 
@@ -331,7 +509,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Sleep Time
 
-**Method**: `get_sleep_time(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_sleep_time(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, document_id: str | None = None)`
 
 **Payload**:
 
@@ -359,12 +537,11 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Ring Configuration
 
-**Method**: `get_ring_configuration(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_ring_configuration(document_id: str | None = None)`
 
 **Payload**:
 
-- `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
-- `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
+- `document_id`: Optional individual document ID from a prior response. If omitted, all ring configuration documents are returned.
 
 **Example Response**:
 
@@ -385,7 +562,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Rest Mode Period
 
-**Method**: `get_rest_mode_period(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_rest_mode_period(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, document_id: str | None = None)`
 
 **Payload**:
 
@@ -417,7 +594,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Sessions
 
-**Method**: `get_sessions(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_sessions(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, document_id: str | None = None)`
 
 **Payload**:
 
@@ -451,7 +628,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Daily SpO2
 
-**Method**: `get_daily_spo2(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_daily_spo2(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, document_id: str | None = None)`
 
 **Payload**:
 
@@ -475,7 +652,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Daily Stress
 
-**Method**: `get_daily_stress(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_daily_stress(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, document_id: str | None = None)`
 
 **Payload**:
 
@@ -499,7 +676,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Tags
 
-**Method**: `get_tags(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_tags(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, document_id: str | None = None)`
 
 **Payload**:
 
@@ -525,7 +702,7 @@ There are nine different API requests that `OuraClient` can make. Full Oura API 
 
 ### Get Workouts
 
-**Method**: `get_workouts(start_date: str = <end_date - 1 day>, end_date: str = <today's date>)`
+**Method**: `get_workouts(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, document_id: str | None = None)`
 
 **Payload**:
 

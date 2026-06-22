@@ -1,6 +1,6 @@
 # Oura Ring for Python <!-- omit in toc -->
 
-Tools for acquiring and analyzing Oura API data.
+Python client for the Oura API v2 with OAuth2 support.
 
 [Oura](https://ouraring.com) is a wearable ring for monitoring sleep, activity, and workouts.
 

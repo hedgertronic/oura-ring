@@ -14,17 +14,25 @@ Examples:
 
         pat = os.getenv("PERSONAL_ACCESS_TOKEN") or ""
 
-    Creating a client:
+    Creating a client (OAuth2 access token, or a legacy personal access token):
         from oura_ring import OuraClient
 
-        client = OuraClient(pat)
+        client = OuraClient(access_token)
         ...
 
-        with OuraClient(pat) as client:
+        with OuraClient(access_token) as client:
             ...
 
+    Acquiring an OAuth2 token (the path for new integrations; see oura_ring.auth):
+        from oura_ring import OuraAuth
+
+        oauth = OuraAuth(client_id, client_secret)
+        # redirect the user to oauth.authorize_url(...), then:
+        tokens = oauth.exchange_code(code)
+        client = OuraClient(access_token=tokens["access_token"])
+
     Making requests:
-        client = OuraClient(pat)
+        client = OuraClient(access_token)
 
         sleep = client.get_daily_sleep()
         activity = client.get_daily_activity()
@@ -39,10 +47,9 @@ Attributes:
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta
-from typing import Any
+from typing import Any, cast
 
 import requests
-
 
 API_URL = "https://api.ouraring.com"
 
@@ -51,7 +58,8 @@ class OuraClient:
     """Make requests to the Oura API.
 
     Attributes:
-        session (authlib.OAuth2Session): Requests session for accessing the Oura API.
+        session (requests.Session): Requests session for accessing the Oura API,
+            preconfigured with the bearer-token Authorization header.
 
     Raises:
         ValueError: If `start_date` is after `end_date`.
@@ -60,18 +68,40 @@ class OuraClient:
     ####################################################################################
     # INIT STUFF
 
-    def __init__(self, personal_access_token: str):
+    def __init__(
+        self,
+        access_token: str | None = None,
+        *,
+        personal_access_token: str | None = None,
+    ):
         """Initialize a Requests session for making API requests.
 
+        The Oura API authenticates every request with a bearer token. That token
+        can be either an OAuth2 access token (obtained via ``OuraAuth``) or
+        a legacy personal access token. Oura deprecated personal access tokens in
+        December 2025 and no longer issues new ones, but tokens created earlier may
+        still work; OAuth2 is the path for any new integration.
+
         Args:
-            personal_access_token (str): Token for accessing the API provided by Oura.
+            access_token (str, optional): OAuth2 access token, or a legacy personal
+                access token. Passed positionally for backwards compatibility with
+                ``OuraClient(pat)``.
+            personal_access_token (str, optional): Backwards-compatible keyword alias
+                for ``access_token``.
+
+        Raises:
+            ValueError: If no token is provided.
         """
-        self._personal_access_token: str = personal_access_token
+        token = access_token or personal_access_token
+        if not token:
+            raise ValueError(
+                "An access token (OAuth2) or personal access token is required."
+            )
+
+        self._access_token: str = token
 
         self.session = requests.Session()
-        self.session.headers.update(
-            {"Authorization": f"Bearer {self._personal_access_token}"}
-        )
+        self.session.headers.update({"Authorization": f"Bearer {self._access_token}"})
 
     def __enter__(self) -> OuraClient:
         """Enter a context manager.
@@ -81,7 +111,7 @@ class OuraClient:
         """
         return self
 
-    def __exit__(self, *_) -> None:
+    def __exit__(self, *_: object) -> None:
         """Exit a context manager by closing the Requests session.
 
         Args:
@@ -89,7 +119,7 @@ class OuraClient:
         """
         self.close()
 
-    def close(self):
+    def close(self) -> None:
         """Close the Requests session."""
         self.session.close()
 
@@ -121,10 +151,10 @@ class OuraClient:
         )
 
     def get_rest_mode_period(
-            self,
-            start_date: str | None = None,
-            end_date: str | None = None,
-            document_id: str | None = None,
+        self,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        document_id: str | None = None,
     ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Rest Mode Period endpoint.
 
@@ -189,7 +219,7 @@ class OuraClient:
         if document_id:
             return self._make_request(
                 method="GET",
-                url_slug=f"v2/usercollection/rest_mode_period/{document_id}"
+                url_slug=f"v2/usercollection/rest_mode_period/{document_id}",
             )
 
         return self._make_paginated_request(
@@ -199,10 +229,10 @@ class OuraClient:
         )
 
     def get_ring_configuration(
-            self,
-            start_date: str | None = None,
-            end_date: str | None = None,
-            document_id: str | None = None,
+        self,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        document_id: str | None = None,
     ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Ring Configuration endpoint.
 
@@ -265,10 +295,10 @@ class OuraClient:
         )
 
     def get_sleep_time(
-            self,
-            start_date: str | None = None,
-            end_date: str | None = None,
-            document_id: str | None = None,
+        self,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        document_id: str | None = None,
     ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Sleep Time endpoint.
 
@@ -413,10 +443,10 @@ class OuraClient:
         )
 
     def get_daily_spo2(
-            self,
-            start_date: str | None = None,
-            end_date: str | None = None,
-            document_id: str | None = None,
+        self,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        document_id: str | None = None,
     ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Daily Spo2 endpoint.
 
@@ -586,7 +616,7 @@ class OuraClient:
         start, end = self._format_dates(start_date, end_date)
 
         if document_id:
-            return self._make_paginated_request(
+            return self._make_request(
                 method="GET",
                 url_slug=f"v2/usercollection/enhanced_tag/{document_id}",
             )
@@ -832,10 +862,10 @@ class OuraClient:
                 Expected in ISO 8601 format (`YYYY-MM-DDThh:mm:ss`). Time is optional,
                 will default to 00:00:00. Time zone is also supported. Defaults to
                 one day before `end_date`.
-            end_datetime (str, optional): The latest date for which to get data. Expected
-                in ISO 8601 format (`YYYY-MM-DDThh:mm:ss`). Time is optional, will
-                default to 00:00:00. Time zone is also supported. Defaults to today's
-                date.
+            end_datetime (str, optional): The latest date for which to get data.
+                Expected in ISO 8601 format (`YYYY-MM-DDThh:mm:ss`). Time is optional,
+                will default to 00:00:00. Time zone is also supported. Defaults to
+                today's date.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -1221,11 +1251,246 @@ class OuraClient:
             params={"start_date": start, "end_date": end},
         )
 
+    def get_daily_resilience(
+        self,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        document_id: str | None = None,
+    ) -> list[dict[str, Any]] | dict[str, Any]:
+        """Make request to Get Daily Resilience endpoint.
+
+        Returns Oura Daily Resilience data for the specified Oura user within a
+        given timeframe.
+
+        Resilience reflects the user's capacity to withstand and recover from
+        stress, derived from long-term sleep recovery, daytime recovery, and stress
+        load.
+
+        Args:
+            start_date (str, optional): The earliest date for which to get data.
+                Expected in ISO 8601 format (`YYYY-MM-DD`). Defaults to one day
+                before `end_date`.
+            end_date (str, optional): The latest date for which to get data. Expected
+                in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+            document_id (str, optional): Individual document id, listed at "id"
+                in responses. Allows you to re-access a previous datapoint.
+                If present, start_date and end_date are ignored.
+
+        Returns:
+            list[dict[str, Any]]: Response JSON data loaded into an object.
+                Example:
+                    [
+                        {
+                            "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                            "day": "2021-10-27",
+                            "contributors": {
+                                "sleep_recovery": 64.2,
+                                "daytime_recovery": 56.8,
+                                "stress": 40.1
+                            },
+                            "level": "solid"
+                        },
+                        ...
+                    ]
+
+            dict[str, Any]: Response JSON data loaded into an object.
+                Example:
+                    {
+                        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                        "day": "2021-10-27",
+                        "contributors": {
+                            "sleep_recovery": 64.2,
+                            "daytime_recovery": 56.8,
+                            "stress": 40.1
+                        },
+                        "level": "solid"
+                    }
+        """
+        start, end = self._format_dates(start_date, end_date)
+
+        if document_id:
+            return self._make_request(
+                method="GET",
+                url_slug=f"v2/usercollection/daily_resilience/{document_id}",
+            )
+
+        return self._make_paginated_request(
+            method="GET",
+            url_slug="v2/usercollection/daily_resilience",
+            params={"start_date": start, "end_date": end},
+        )
+
+    def get_daily_cardiovascular_age(
+        self,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        document_id: str | None = None,
+    ) -> list[dict[str, Any]] | dict[str, Any]:
+        """Make request to Get Daily Cardiovascular Age endpoint.
+
+        Returns Oura Daily Cardiovascular Age data for the specified Oura user
+        within a given timeframe.
+
+        Cardiovascular age estimates the age of the user's cardiovascular system
+        (vascular age) relative to their chronological age. Both ``vascular_age``
+        and ``pulse_wave_velocity`` may be ``null`` when Oura has no estimate for a
+        given day.
+
+        Args:
+            start_date (str, optional): The earliest date for which to get data.
+                Expected in ISO 8601 format (`YYYY-MM-DD`). Defaults to one day
+                before `end_date`.
+            end_date (str, optional): The latest date for which to get data. Expected
+                in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+            document_id (str, optional): Individual document id, listed at "id"
+                in responses. Allows you to re-access a previous datapoint.
+                If present, start_date and end_date are ignored.
+
+        Returns:
+            list[dict[str, Any]]: Response JSON data loaded into an object.
+                Example:
+                    [
+                        {
+                            "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                            "day": "2021-10-27",
+                            "vascular_age": 32,
+                            "pulse_wave_velocity": 7.2
+                        },
+                        ...
+                    ]
+
+            dict[str, Any]: Response JSON data loaded into an object.
+                Example:
+                    {
+                        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                        "day": "2021-10-27",
+                        "vascular_age": 32,
+                        "pulse_wave_velocity": 7.2
+                    }
+        """
+        start, end = self._format_dates(start_date, end_date)
+
+        if document_id:
+            return self._make_request(
+                method="GET",
+                url_slug=f"v2/usercollection/daily_cardiovascular_age/{document_id}",
+            )
+
+        return self._make_paginated_request(
+            method="GET",
+            url_slug="v2/usercollection/daily_cardiovascular_age",
+            params={"start_date": start, "end_date": end},
+        )
+
+    def get_vo2_max(
+        self,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        document_id: str | None = None,
+    ) -> list[dict[str, Any]] | dict[str, Any]:
+        """Make request to Get VO2 Max endpoint.
+
+        Returns Oura VO2 Max data for the specified Oura user within a given
+        timeframe.
+
+        VO2 max estimates the maximum rate of oxygen the user's body can use during
+        exercise, a measure of cardiorespiratory fitness.
+
+        Note: the API route is ``vO2_max`` (Oura's casing), while the value field
+        in the response is ``vo2_max``.
+
+        Args:
+            start_date (str, optional): The earliest date for which to get data.
+                Expected in ISO 8601 format (`YYYY-MM-DD`). Defaults to one day
+                before `end_date`.
+            end_date (str, optional): The latest date for which to get data. Expected
+                in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
+            document_id (str, optional): Individual document id, listed at "id"
+                in responses. Allows you to re-access a previous datapoint.
+                If present, start_date and end_date are ignored.
+
+        Returns:
+            list[dict[str, Any]]: Response JSON data loaded into an object.
+                Example:
+                    [
+                        {
+                            "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                            "day": "2021-10-27",
+                            "timestamp": "2021-10-27T00:00:00+00:00",
+                            "vo2_max": 48
+                        },
+                        ...
+                    ]
+
+            dict[str, Any]: Response JSON data loaded into an object.
+                Example:
+                    {
+                        "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
+                        "day": "2021-10-27",
+                        "timestamp": "2021-10-27T00:00:00+00:00",
+                        "vo2_max": 48
+                    }
+        """
+        start, end = self._format_dates(start_date, end_date)
+
+        if document_id:
+            return self._make_request(
+                method="GET",
+                url_slug=f"v2/usercollection/vO2_max/{document_id}",
+            )
+
+        return self._make_paginated_request(
+            method="GET",
+            url_slug="v2/usercollection/vO2_max",
+            params={"start_date": start, "end_date": end},
+        )
+
+    def get_ring_battery_level(
+        self,
+        start_datetime: str | None = None,
+        end_datetime: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """Make request to Get Ring Battery Level endpoint.
+
+        Returns available ring battery level data for the specified Oura user within
+        a given timeframe.
+
+        Like heart rate, this is time-series data keyed by datetime rather than by
+        day, so it takes datetime parameters and has no single-document route.
+
+        Args:
+            start_datetime (str, optional): The earliest datetime for which to get
+                data. Expected in ISO 8601 format (`YYYY-MM-DDThh:mm:ss`). Time is
+                optional and defaults to 00:00:00; time zone is supported. Defaults
+                to one day before `end_datetime`.
+            end_datetime (str, optional): The latest datetime for which to get data.
+                Expected in ISO 8601 format (`YYYY-MM-DDThh:mm:ss`). Time is optional
+                and defaults to 00:00:00; time zone is supported. Defaults to now.
+
+        Returns:
+            list[dict[str, Any]]: Response JSON data loaded into an object.
+                Example:
+                    [
+                        {
+                            "battery_level": 87,
+                            "timestamp": "2021-01-01T01:02:03+00:00"
+                        },
+                        ...
+                    ]
+        """
+        start, end = self._format_datetimes(start_datetime, end_datetime)
+
+        return self._make_paginated_request(
+            method="GET",
+            url_slug="v2/usercollection/ring_battery_level",
+            params={"start_datetime": start, "end_datetime": end},
+        )
+
     ####################################################################################
     # HELPER METHODS
 
     def _make_paginated_request(
-        self, method, url_slug, **kwargs
+        self, method: str, url_slug: str, **kwargs: Any
     ) -> list[dict[str, Any]]:
         params = kwargs.pop("params", {})
         response_data: list[dict[str, Any]] = []
@@ -1248,7 +1513,9 @@ class OuraClient:
 
         return response_data
 
-    def _make_request(self, method, url_slug, **kwargs) -> dict[str, Any]:
+    def _make_request(
+        self, method: str, url_slug: str, **kwargs: Any
+    ) -> dict[str, Any]:
         response = self.session.request(
             method=method,
             url=f"{API_URL}/{url_slug}",
@@ -1258,7 +1525,7 @@ class OuraClient:
 
         response.raise_for_status()
 
-        return response.json()
+        return cast("dict[str, Any]", response.json())
 
     def _format_dates(
         self, start_date: str | None, end_date: str | None
@@ -1278,10 +1545,17 @@ class OuraClient:
     ) -> tuple[str, str]:
         end = datetime.fromisoformat(end_datetime) if end_datetime else datetime.today()
         start = (
-            datetime.fromisoformat(start_datetime) if start_datetime else end - timedelta(days=1)
+            datetime.fromisoformat(start_datetime)
+            if start_datetime
+            else end - timedelta(days=1)
         )
 
-        if start > end:
-            raise ValueError(f"Start datetime greater than end datetime: {start} > {end}")
+        # A caller can pass one timezone-aware datetime and let the other default to
+        # naive (or vice versa). Comparing naive and aware datetimes raises
+        # TypeError, so normalize both to aware (naive is assumed local) first.
+        if start.astimezone() > end.astimezone():
+            raise ValueError(
+                f"Start datetime greater than end datetime: {start} > {end}"
+            )
 
         return str(start), str(end)

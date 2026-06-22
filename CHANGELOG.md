@@ -46,4 +46,4 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   integrations should use OAuth2.
 - Non-goals for this release (deliberate, to keep the client simple): automatic
   token refresh / 429 retry (the client raises; use `OuraAuth.refresh_token`
-  to rotate), the `fields`/`latest` query params, and the webhook subscription API.
+  to rotate), the `fields` query param, and the webhook subscription API.

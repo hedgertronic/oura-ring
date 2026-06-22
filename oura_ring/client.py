@@ -1,4 +1,4 @@
-"""Tools for acquiring and analyzing Oura API data.
+"""Python client for the Oura API v2 with OAuth2 support.
 
 Oura is a wearable ring for monitoring sleep, activity, and workouts. Learn more about
 Oura at https://ouraring.com.

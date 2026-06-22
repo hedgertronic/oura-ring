@@ -1,7 +1,7 @@
 [project]
 name = "oura-ring"
-version = "1.0.0"
-description = "Tools for acquiring and analyzing Oura API data."
+version = "1.0.1"
+description = "Python client for the Oura API v2 with OAuth2 support."
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.12"

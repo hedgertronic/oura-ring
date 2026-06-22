@@ -230,27 +230,18 @@ class OuraClient:
 
     def get_ring_configuration(
         self,
-        start_date: str | None = None,
-        end_date: str | None = None,
         document_id: str | None = None,
     ) -> list[dict[str, Any]] | dict[str, Any]:
         """Make request to Get Ring Configuration endpoint.
 
-        Returns Oura Ring Configuration data for the specified Oura user within
-        a given timeframe.
+        Returns Oura Ring Configuration data for the specified Oura user.
 
         The Ring Configuration scope includes information about the user's
         ring(s). This includes the model, size, color, etc.
 
         Args:
-            start_date (str, optional): The earliest date for which to get data.
-                Expected in ISO 8601 format (`YYYY-MM-DD`). Defaults to one day
-                before `end_date`.
-            end_date (str, optional): The latest date for which to get data. Expected
-                in ISO 8601 format (`YYYY-MM-DD`). Defaults to today's date.
             document_id (str, options): Individual document id, listed at "id"
                 in responses.  Allows you to re-access a previous datapoint.
-                If present, start_date and end_date are ignored.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -280,8 +271,6 @@ class OuraClient:
                         "size": 0
                     }
         """
-        start, end = self._format_dates(start_date, end_date)
-
         if document_id:
             return self._make_request(
                 method="GET",
@@ -291,7 +280,6 @@ class OuraClient:
         return self._make_paginated_request(
             method="GET",
             url_slug="v2/usercollection/ring_configuration",
-            params={"start_date": start, "end_date": end},
         )
 
     def get_sleep_time(
@@ -847,6 +835,7 @@ class OuraClient:
         self,
         start_datetime: str | None = None,
         end_datetime: str | None = None,
+        latest: bool | None = None,
     ) -> list[dict[str, Any]]:
         """Make request to Get Heart Rate endpoint.
 
@@ -866,6 +855,7 @@ class OuraClient:
                 Expected in ISO 8601 format (`YYYY-MM-DDThh:mm:ss`). Time is optional,
                 will default to 00:00:00. Time zone is also supported. Defaults to
                 today's date.
+            latest (bool, optional): If true, request only the most recent sample.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -874,17 +864,23 @@ class OuraClient:
                         {
                             "bpm": 60,
                             "source": "sleep",
+                            "timestamp_unix": 1609462923,
                             "timestamp": "2021-01-01T01:02:03+00:00"
                         },
                         ...
                     ]
         """
-        start, end = self._format_datetimes(start_datetime, end_datetime)
+        params: dict[str, Any]
+        if latest:
+            params = {"latest": latest}
+        else:
+            start, end = self._format_datetimes(start_datetime, end_datetime)
+            params = {"start_datetime": start, "end_datetime": end}
 
         return self._make_paginated_request(
             method="GET",
             url_slug="v2/usercollection/heartrate",
-            params={"start_datetime": start, "end_datetime": end},
+            params=params,
         )
 
     def get_sleep_periods(
@@ -1449,6 +1445,7 @@ class OuraClient:
         self,
         start_datetime: str | None = None,
         end_datetime: str | None = None,
+        latest: bool | None = None,
     ) -> list[dict[str, Any]]:
         """Make request to Get Ring Battery Level endpoint.
 
@@ -1466,24 +1463,33 @@ class OuraClient:
             end_datetime (str, optional): The latest datetime for which to get data.
                 Expected in ISO 8601 format (`YYYY-MM-DDThh:mm:ss`). Time is optional
                 and defaults to 00:00:00; time zone is supported. Defaults to now.
+            latest (bool, optional): If true, request only the most recent sample.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
                 Example:
                     [
                         {
-                            "battery_level": 87,
+                            "level": 87,
+                            "charging": False,
+                            "in_charger": False,
+                            "timestamp_unix": 1609462923,
                             "timestamp": "2021-01-01T01:02:03+00:00"
                         },
                         ...
                     ]
         """
-        start, end = self._format_datetimes(start_datetime, end_datetime)
+        params: dict[str, Any]
+        if latest:
+            params = {"latest": latest}
+        else:
+            start, end = self._format_datetimes(start_datetime, end_datetime)
+            params = {"start_datetime": start, "end_datetime": end}
 
         return self._make_paginated_request(
             method="GET",
             url_slug="v2/usercollection/ring_battery_level",
-            params={"start_datetime": start, "end_datetime": end},
+            params=params,
         )
 
     ####################################################################################

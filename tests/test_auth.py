@@ -10,7 +10,7 @@ from urllib.parse import parse_qs, urlparse
 
 import pytest
 
-from oura_ring import SCOPES, TOKEN_URL, OuraAuth
+from oura_ring import REVOKE_URL, SCOPES, TOKEN_URL, OuraAuth
 
 CLIENT_ID = "fake_client_id"
 CLIENT_SECRET = "fake_client_secret"
@@ -124,6 +124,20 @@ def test_refresh_token_posts_refresh_grant():
         "client_id": CLIENT_ID,
         "client_secret": CLIENT_SECRET,
     }
+
+
+# ----------------------------------------------------------------------------------
+# revoke_token
+
+
+def test_revoke_token_calls_revoke_endpoint():
+    with patch("requests.get") as mock_get:
+        mock_get.return_value = MagicMock(**{"raise_for_status.return_value": None})
+        _client().revoke_token("fake_access")
+
+    assert mock_get.call_args.args[0] == REVOKE_URL
+    assert mock_get.call_args.kwargs["params"] == {"access_token": "fake_access"}
+    assert mock_get.call_args.kwargs["timeout"] == 60
 
 
 # ----------------------------------------------------------------------------------

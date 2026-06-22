@@ -11,8 +11,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   authorize URL, exchange the code for tokens, and refresh tokens. Verified
   end-to-end against Oura's live endpoints, including single-use refresh-token
   rotation.
+- OAuth token revocation via `OuraAuth.revoke_token(...)`.
 - New endpoints: `get_daily_resilience`, `get_daily_cardiovascular_age`,
   `get_vo2_max`, and `get_ring_battery_level` (19 endpoints total).
+- `latest` support for heart rate and ring battery time-series routes.
 - `py.typed` marker — the package now ships its inline type annotations (PEP 561).
 - `oura_ring.__version__`.
 - GitHub Actions CI across Python 3.12–3.14 (ruff, mypy, pytest with coverage).
@@ -33,6 +35,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   raised `KeyError` on the single-document response; it now uses a single request.
 - `get_heart_rate` / `get_ring_battery_level` no longer raise `TypeError` when one
   of the datetime bounds is timezone-aware and the other defaults to naive.
+- `get_ring_configuration()` no longer sends unsupported date filters on the list
+  route.
+- Ring battery and heart rate examples now match the current OpenAPI response
+  fields.
 
 ### Notes
 - Personal access tokens were deprecated by Oura in December 2025; new ones can no

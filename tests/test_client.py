@@ -187,7 +187,6 @@ def test_paginated_request_follows_next_token_and_concatenates():
 # (method_name, expected_slug) for endpoints taking start_date/end_date/document_id.
 DATE_ENDPOINT_TABLE = [
     ("get_rest_mode_period", "v2/usercollection/rest_mode_period"),
-    ("get_ring_configuration", "v2/usercollection/ring_configuration"),
     ("get_sleep_time", "v2/usercollection/sleep_time"),
     ("get_daily_sleep", "v2/usercollection/daily_sleep"),
     ("get_daily_spo2", "v2/usercollection/daily_spo2"),
@@ -235,6 +234,32 @@ def test_date_endpoint_document_id_path(method_name, slug):
     kwargs = mock_request.call_args.kwargs
     assert kwargs["url"] == f"{API_URL}/{slug}/test-id-1"
     # document_id path is a single request without date params.
+    assert "params" not in kwargs
+
+
+def test_get_ring_configuration_list_has_no_date_params():
+    client = OuraClient(FAKE_TOKEN)
+    with patch("requests.Session.request") as mock_request:
+        mock_request.return_value = _response(_page([{"id": "ring-id-1"}]))
+        result = client.get_ring_configuration()
+
+    assert result == [{"id": "ring-id-1"}]
+    mock_request.assert_called_once()
+    kwargs = mock_request.call_args.kwargs
+    assert kwargs["url"] == f"{API_URL}/v2/usercollection/ring_configuration"
+    assert kwargs["params"] == {}
+
+
+def test_get_ring_configuration_document_id_path():
+    client = OuraClient(FAKE_TOKEN)
+    with patch("requests.Session.request") as mock_request:
+        mock_request.return_value = _response({"id": "ring-id-1"})
+        result = client.get_ring_configuration(document_id="ring-id-1")
+
+    assert result == {"id": "ring-id-1"}
+    mock_request.assert_called_once()
+    kwargs = mock_request.call_args.kwargs
+    assert kwargs["url"] == f"{API_URL}/v2/usercollection/ring_configuration/ring-id-1"
     assert "params" not in kwargs
 
 
@@ -301,6 +326,20 @@ def test_datetime_endpoint_sends_datetime_params(method_name, slug):
     # separator rather than 'T'.
     assert kwargs["params"]["start_datetime"] == "2024-01-01 00:00:00+00:00"
     assert kwargs["params"]["end_datetime"] == "2024-01-02 00:00:00+00:00"
+
+
+@pytest.mark.parametrize("method_name,slug", DATETIME_ENDPOINT_TABLE)
+def test_datetime_endpoint_latest_param(method_name, slug):
+    client = OuraClient(FAKE_TOKEN)
+    with patch("requests.Session.request") as mock_request:
+        mock_request.return_value = _response(_page([{"timestamp": "2024-01-01"}]))
+        result = getattr(client, method_name)(latest=True)
+
+    assert result == [{"timestamp": "2024-01-01"}]
+    mock_request.assert_called_once()
+    kwargs = mock_request.call_args.kwargs
+    assert kwargs["url"] == f"{API_URL}/{slug}"
+    assert kwargs["params"] == {"latest": True}
 
 
 # ----------------------------------------------------------------------------------

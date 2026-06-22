@@ -40,6 +40,7 @@ import requests
 
 AUTHORIZE_URL = "https://cloud.ouraring.com/oauth/authorize"
 TOKEN_URL = "https://api.ouraring.com/oauth/token"
+REVOKE_URL = "https://api.ouraring.com/oauth/revoke"
 
 # OAuth2 scopes Oura recognizes. The first eight are the only ones declared in
 # Oura's published OpenAPI spec (the SpO2 scope is `spo2Daily` there, though the
@@ -165,6 +166,19 @@ class OuraAuth:
                 "client_secret": self.client_secret,
             }
         )
+
+    def revoke_token(self, access_token: str) -> None:
+        """Revoke an Oura API access token.
+
+        Args:
+            access_token (str): The access token to revoke.
+        """
+        response = requests.get(
+            REVOKE_URL,
+            params={"access_token": access_token},
+            timeout=60,
+        )
+        response.raise_for_status()
 
     def _token_request(self, data: dict[str, str]) -> dict[str, Any]:
         response = requests.post(TOKEN_URL, data=data, timeout=60)

@@ -9,6 +9,7 @@ from importlib.metadata import PackageNotFoundError, version
 
 from oura_ring.auth import (
     AUTHORIZE_URL,
+    REVOKE_URL,
     SCOPES,
     TOKEN_URL,
     OuraAuth,
@@ -23,6 +24,7 @@ except PackageNotFoundError:  # pragma: no cover
 __all__ = [
     "API_URL",
     "AUTHORIZE_URL",
+    "REVOKE_URL",
     "SCOPES",
     "TOKEN_URL",
     "__version__",

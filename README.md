@@ -148,7 +148,7 @@ client = OuraClient(token)
 
 There are 19 different API requests that `OuraClient` can make. Full Oura API v2 documentation can be found on [Oura's website](https://cloud.ouraring.com/v2/docs).
 
-> **Scope and limitations (by design):** the client returns the API's JSON as-is and raises on HTTP errors (including expired tokens and `429` rate limits) — there is no automatic token refresh or retry built in; use `OuraAuth.refresh_token` to rotate tokens. The optional `fields` (sparse fieldsets) and `latest` query params, and the webhook subscription API, are intentionally not exposed.
+> **Scope and limitations (by design):** the client returns the API's JSON as-is and raises on HTTP errors (including expired tokens and `429` rate limits) — there is no automatic token refresh or retry built in; use `OuraAuth.refresh_token` to rotate tokens. The optional `fields` (sparse fieldsets) query param and the webhook subscription API are intentionally not exposed.
 
 ### Get Personal Info
 
@@ -397,12 +397,13 @@ There are 19 different API requests that `OuraClient` can make. Full Oura API v2
 
 ### Get Heart Rate
 
-**Method**: `get_heart_rate(start_datetime: str = <end_datetime - 1 day>, end_datetime: str = <now>)`
+**Method**: `get_heart_rate(start_datetime: str = <end_datetime - 1 day>, end_datetime: str = <now>, latest: bool | None = None)`
 
 **Payload**:
 
 - `start_datetime`: The earliest datetime for which to get data. Expected in ISO 8601 format (YYYY-MM-DDThh:mm:ss). Defaults to one day before the `end_datetime` parameter.
 - `end_datetime`: The latest datetime for which to get data. Expected in ISO 8601 format (YYYY-MM-DDThh:mm:ss). Defaults to now.
+- `latest`: If true, request only the most recent sample.
 
 **Example Response**:
 
@@ -411,6 +412,7 @@ There are 19 different API requests that `OuraClient` can make. Full Oura API v2
     {
         "bpm": 60,
         "source": "sleep",
+        "timestamp_unix": 1609462923,
         "timestamp": "2021-01-01T01:02:03+00:00"
     },
     ...
@@ -419,19 +421,23 @@ There are 19 different API requests that `OuraClient` can make. Full Oura API v2
 
 ### Get Ring Battery Level
 
-**Method**: `get_ring_battery_level(start_datetime: str = <end_datetime - 1 day>, end_datetime: str = <now>)`
+**Method**: `get_ring_battery_level(start_datetime: str = <end_datetime - 1 day>, end_datetime: str = <now>, latest: bool | None = None)`
 
 **Payload**:
 
 - `start_datetime`: The earliest datetime for which to get data. Expected in ISO 8601 format (YYYY-MM-DDThh:mm:ss). Defaults to one day before the `end_datetime` parameter.
 - `end_datetime`: The latest datetime for which to get data. Expected in ISO 8601 format (YYYY-MM-DDThh:mm:ss). Defaults to now.
+- `latest`: If true, request only the most recent sample.
 
 **Example Response**:
 
 ```python
 [
     {
-        "battery_level": 87,
+        "level": 87,
+        "charging": False,
+        "in_charger": False,
+        "timestamp_unix": 1609462923,
         "timestamp": "2021-01-01T01:02:03+00:00"
     },
     ...
@@ -531,12 +537,11 @@ There are 19 different API requests that `OuraClient` can make. Full Oura API v2
 
 ### Get Ring Configuration
 
-**Method**: `get_ring_configuration(start_date: str = <end_date - 1 day>, end_date: str = <today's date>, document_id: str | None = None)`
+**Method**: `get_ring_configuration(document_id: str | None = None)`
 
 **Payload**:
 
-- `start_date`: The earliest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to one day before the `end_date` parameter.
-- `end_date`: The latest date for which to get data. Expected in ISO 8601 format (YYYY-MM-DD). Defaults to today's date.
+- `document_id`: Optional individual document ID from a prior response. If omitted, all ring configuration documents are returned.
 
 **Example Response**:
 

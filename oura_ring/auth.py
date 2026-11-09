@@ -39,7 +39,7 @@ from urllib.parse import urlencode
 import requests
 
 AUTHORIZE_URL = "https://cloud.ouraring.com/oauth/authorize"
-TOKEN_URL = "https://api.ouraring.com/oauth/token"
+TOKEN_URL = "https://api.ouraring.com/oauth/token"  # noqa: S105 (URL, not a secret)
 REVOKE_URL = "https://api.ouraring.com/oauth/revoke"
 
 # OAuth2 scopes Oura recognizes. The first eight are the only ones declared in
@@ -66,14 +66,15 @@ SCOPES = (
 
 
 class OuraAuth:
-    """Acquire and refresh Oura API access tokens via the Authorization Code grant.
-
-    Args:
-        client_id (str): OAuth2 client id from the Oura developer portal.
-        client_secret (str): OAuth2 client secret from the Oura developer portal.
-    """
+    """Acquire and refresh Oura API access tokens via the Authorization Code grant."""
 
     def __init__(self, client_id: str, client_secret: str):
+        """Store the app credentials used for every token request.
+
+        Args:
+            client_id (str): OAuth2 client id from the Oura developer portal.
+            client_secret (str): OAuth2 client secret from the Oura developer portal.
+        """
         self.client_id = client_id
         self.client_secret = client_secret
 

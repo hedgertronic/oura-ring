@@ -47,20 +47,54 @@ line-length = 88
 target-version = "py312"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "B", "UP", "SIM", "C4"]
+select = [
+    "E",
+    "F",
+    "W",
+    "I",
+    "N",
+    "B",
+    "C4",
+    "UP",
+    "SIM",
+    "D",
+    "S",
+    "A",
+    "ERA",
+    "TRY",
+    "C90",
+]
+# TRY003: we raise stdlib exceptions with inline messages.
+ignore = ["D212", "TRY003"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["E501"]
+"tests/*" = ["S101", "S105", "S106", "D", "E501"]
 
 [tool.mypy]
-files = ["oura_ring"]
+files = ["oura_ring", "tests"]
+strict = true
 pretty = true
-show_error_codes = true
 show_column_numbers = true
+show_error_codes = true
 show_error_context = true
 warn_unreachable = true
-ignore_missing_imports = true
-disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+# Test functions are intentionally unannotated and lean on mock objects whose
+# attribute access is typed `Any`. Relax the strict-only purity flags so the
+# suite is still checked, but isn't forced to annotate every fixture and mock.
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_any_generics = false
+warn_return_any = false
+check_untyped_defs = false
 
 [tool.coverage.run]
 source = ["oura_ring"]
@@ -68,7 +102,7 @@ omit = ["tests/*"]
 
 [tool.coverage.report]
 show_missing = true
-fail_under = 90
+fail_under = 100
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

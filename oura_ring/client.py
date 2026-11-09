@@ -136,7 +136,7 @@ class OuraClient:
 
         Returns:
             dict[str, list[dict[str, Any]]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     {
                         "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                         "age": 31,
@@ -176,7 +176,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
@@ -197,7 +197,7 @@ class OuraClient:
                     ]
 
             dict[str, Any]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     {
                         "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                         "end_day": "2019-08-24",
@@ -238,7 +238,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
@@ -253,7 +253,7 @@ class OuraClient:
                     ]
 
             dict[str, Any]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     {
                         "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                         "color": "glossy_black",
@@ -301,7 +301,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
@@ -318,7 +318,7 @@ class OuraClient:
                     ]
 
             dict[str, Any]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     {
                         "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                         "day": "2019-08-24",
@@ -364,7 +364,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
@@ -385,7 +385,7 @@ class OuraClient:
                     ]
 
             dict[str, Any]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     {
                         "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                         "contributors": {
@@ -435,7 +435,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
@@ -448,7 +448,7 @@ class OuraClient:
                     ]
 
             dict[str, Any]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     {
                         "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                         "day": "2019-08-24",
@@ -494,7 +494,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
@@ -507,7 +507,7 @@ class OuraClient:
                     ]
 
             dict[str, Any]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     {
                         "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                         "day": "2019-08-24",
@@ -552,7 +552,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
@@ -600,7 +600,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
@@ -648,7 +648,7 @@ class OuraClient:
                     ]
 
             dict[str, Any]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     {
                         "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                         "class_5_min": "<long sequence of 0|1|2|3|4|5>",
@@ -724,7 +724,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
@@ -748,7 +748,7 @@ class OuraClient:
                     ]
 
             dict[str, Any]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     {
                         "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                         "contributors": {
@@ -804,7 +804,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "bpm": 60,
@@ -854,7 +854,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
@@ -906,7 +906,7 @@ class OuraClient:
                     ]
 
             dict[str, Any]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     {
                         "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                         "average_breath": 12.625,
@@ -988,7 +988,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
@@ -1011,7 +1011,7 @@ class OuraClient:
                     ]
 
             dict[str, Any]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     {
                         "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                         "day": "2021-11-12",
@@ -1065,7 +1065,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
@@ -1080,7 +1080,7 @@ class OuraClient:
                     ]
 
             dict[str, Any]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     {
                         "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                         "day": "2021-01-01",
@@ -1125,7 +1125,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
@@ -1143,7 +1143,7 @@ class OuraClient:
                     ]
 
             dict[str, Any]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     {
                         "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                         "activity": "cycling",
@@ -1191,7 +1191,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
@@ -1207,7 +1207,7 @@ class OuraClient:
                     ]
 
             dict[str, Any]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     {
                         "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                         "day": "2021-10-27",
@@ -1254,7 +1254,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
@@ -1266,7 +1266,7 @@ class OuraClient:
                     ]
 
             dict[str, Any]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     {
                         "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                         "day": "2021-10-27",
@@ -1310,7 +1310,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
@@ -1322,7 +1322,7 @@ class OuraClient:
                     ]
 
             dict[str, Any]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     {
                         "id": "8f9a5221-639e-4a85-81cb-4065ef23f979",
                         "day": "2021-10-27",
@@ -1364,7 +1364,7 @@ class OuraClient:
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
-                Example:
+                For example:
                     [
                         {
                             "level": 87,

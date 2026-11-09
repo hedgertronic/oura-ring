@@ -214,18 +214,11 @@ class OuraClient:
                         "start_time": "2019-08-24T14:15:22Z"
                     }
         """
-        start, end = self._format_dates(start_date, end_date)
-
-        if document_id:
-            return self._make_request(
-                method="GET",
-                url_slug=f"v2/usercollection/rest_mode_period/{document_id}",
-            )
-
-        return self._make_paginated_request(
-            method="GET",
+        return self._get_date_collection(
             url_slug="v2/usercollection/rest_mode_period",
-            params={"start_date": start, "end_date": end},
+            start_date=start_date,
+            end_date=end_date,
+            document_id=document_id,
         )
 
     def get_ring_configuration(
@@ -338,18 +331,11 @@ class OuraClient:
                         "status": "not_enough_nights"
                     }
         """
-        start, end = self._format_dates(start_date, end_date)
-
-        if document_id:
-            return self._make_request(
-                method="GET",
-                url_slug=f"v2/usercollection/sleep_time/{document_id}",
-            )
-
-        return self._make_paginated_request(
-            method="GET",
+        return self._get_date_collection(
             url_slug="v2/usercollection/sleep_time",
-            params={"start_date": start, "end_date": end},
+            start_date=start_date,
+            end_date=end_date,
+            document_id=document_id,
         )
 
     def get_daily_sleep(
@@ -416,18 +402,11 @@ class OuraClient:
                         "timestamp": "2022-07-14T00:00:00+00:00"
                     }
         """
-        start, end = self._format_dates(start_date, end_date)
-
-        if document_id:
-            return self._make_request(
-                method="GET",
-                url_slug=f"v2/usercollection/daily_sleep/{document_id}",
-            )
-
-        return self._make_paginated_request(
-            method="GET",
+        return self._get_date_collection(
             url_slug="v2/usercollection/daily_sleep",
-            params={"start_date": start, "end_date": end},
+            start_date=start_date,
+            end_date=end_date,
+            document_id=document_id,
         )
 
     def get_daily_spo2(
@@ -478,18 +457,11 @@ class OuraClient:
                         }
                     }
         """
-        start, end = self._format_dates(start_date, end_date)
-
-        if document_id:
-            return self._make_request(
-                method="GET",
-                url_slug=f"v2/usercollection/daily_spo2/{document_id}",
-            )
-
-        return self._make_paginated_request(
-            method="GET",
+        return self._get_date_collection(
             url_slug="v2/usercollection/daily_spo2",
-            params={"start_date": start, "end_date": end},
+            start_date=start_date,
+            end_date=end_date,
+            document_id=document_id,
         )
 
     def get_daily_stress(
@@ -544,18 +516,11 @@ class OuraClient:
                         "day_summary": "restored"
                     }
         """
-        start, end = self._format_dates(start_date, end_date)
-
-        if document_id:
-            return self._make_request(
-                method="GET",
-                url_slug=f"v2/usercollection/daily_stress/{document_id}",
-            )
-
-        return self._make_paginated_request(
-            method="GET",
+        return self._get_date_collection(
             url_slug="v2/usercollection/daily_stress",
-            params={"start_date": start, "end_date": end},
+            start_date=start_date,
+            end_date=end_date,
+            document_id=document_id,
         )
 
     def get_enhanced_tag(
@@ -601,18 +566,11 @@ class OuraClient:
                         ...
                     ]
         """
-        start, end = self._format_dates(start_date, end_date)
-
-        if document_id:
-            return self._make_request(
-                method="GET",
-                url_slug=f"v2/usercollection/enhanced_tag/{document_id}",
-            )
-
-        return self._make_paginated_request(
-            method="GET",
+        return self._get_date_collection(
             url_slug="v2/usercollection/enhanced_tag",
-            params={"start_date": start, "end_date": end},
+            start_date=start_date,
+            end_date=end_date,
+            document_id=document_id,
         )
 
     def get_daily_activity(
@@ -734,18 +692,11 @@ class OuraClient:
                         "timestamp": "2021-11-26T04:00:00-08:00"
                     }
         """
-        start, end = self._format_dates(start_date, end_date)
-
-        if document_id:
-            return self._make_request(
-                method="GET",
-                url_slug=f"v2/usercollection/daily_activity/{document_id}",
-            )
-
-        return self._make_paginated_request(
-            method="GET",
+        return self._get_date_collection(
             url_slug="v2/usercollection/daily_activity",
-            params={"start_date": start, "end_date": end},
+            start_date=start_date,
+            end_date=end_date,
+            document_id=document_id,
         )
 
     def get_daily_readiness(
@@ -817,18 +768,11 @@ class OuraClient:
                         "timestamp": "2021-10-27T00:00:00+00:00"
                     }
         """
-        start, end = self._format_dates(start_date, end_date)
-
-        if document_id:
-            return self._make_request(
-                method="GET",
-                url_slug=f"v2/usercollection/daily_readiness/{document_id}",
-            )
-
-        return self._make_paginated_request(
-            method="GET",
+        return self._get_date_collection(
             url_slug="v2/usercollection/daily_readiness",
-            params={"start_date": start, "end_date": end},
+            start_date=start_date,
+            end_date=end_date,
+            document_id=document_id,
         )
 
     def get_heart_rate(
@@ -855,7 +799,8 @@ class OuraClient:
                 Expected in ISO 8601 format (`YYYY-MM-DDThh:mm:ss`). Time is optional,
                 will default to 00:00:00. Time zone is also supported. Defaults to
                 today's date.
-            latest (bool, optional): If true, request only the most recent sample.
+            latest (bool, optional): If true, request only the most recent sample
+                and ignore datetime filters. False or None selects a datetime range.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -1009,18 +954,11 @@ class OuraClient:
                         "type": "long_sleep"
                     }
         """
-        start, end = self._format_dates(start_date, end_date)
-
-        if document_id:
-            return self._make_request(
-                method="GET",
-                url_slug=f"v2/usercollection/sleep/{document_id}",
-            )
-
-        return self._make_paginated_request(
-            method="GET",
+        return self._get_date_collection(
             url_slug="v2/usercollection/sleep",
-            params={"start_date": start, "end_date": end},
+            start_date=start_date,
+            end_date=end_date,
+            document_id=document_id,
         )
 
     def get_sessions(
@@ -1091,18 +1029,11 @@ class OuraClient:
                             "timestamp": "2021-11-12T12:32:09.000-08:00"
                         }
         """
-        start, end = self._format_dates(start_date, end_date)
-
-        if document_id:
-            return self._make_request(
-                method="GET",
-                url_slug=f"v2/usercollection/session/{document_id}",
-            )
-
-        return self._make_paginated_request(
-            method="GET",
+        return self._get_date_collection(
             url_slug="v2/usercollection/session",
-            params={"start_date": start, "end_date": end},
+            start_date=start_date,
+            end_date=end_date,
+            document_id=document_id,
         )
 
     def get_tags(
@@ -1160,18 +1091,11 @@ class OuraClient:
                         ]
                     }
         """
-        start, end = self._format_dates(start_date, end_date)
-
-        if document_id:
-            return self._make_request(
-                method="GET",
-                url_slug=f"v2/usercollection/tag/{document_id}",
-            )
-
-        return self._make_paginated_request(
-            method="GET",
+        return self._get_date_collection(
             url_slug="v2/usercollection/tag",
-            params={"start_date": start, "end_date": end},
+            start_date=start_date,
+            end_date=end_date,
+            document_id=document_id,
         )
 
     def get_workouts(
@@ -1233,18 +1157,11 @@ class OuraClient:
                         "start_datetime": "2021-01-01T01:30:00.000000+00:00"
                     }
         """
-        start, end = self._format_dates(start_date, end_date)
-
-        if document_id:
-            return self._make_request(
-                method="GET",
-                url_slug=f"v2/usercollection/workout/{document_id}",
-            )
-
-        return self._make_paginated_request(
-            method="GET",
+        return self._get_date_collection(
             url_slug="v2/usercollection/workout",
-            params={"start_date": start, "end_date": end},
+            start_date=start_date,
+            end_date=end_date,
+            document_id=document_id,
         )
 
     def get_daily_resilience(
@@ -1302,18 +1219,11 @@ class OuraClient:
                         "level": "solid"
                     }
         """
-        start, end = self._format_dates(start_date, end_date)
-
-        if document_id:
-            return self._make_request(
-                method="GET",
-                url_slug=f"v2/usercollection/daily_resilience/{document_id}",
-            )
-
-        return self._make_paginated_request(
-            method="GET",
+        return self._get_date_collection(
             url_slug="v2/usercollection/daily_resilience",
-            params={"start_date": start, "end_date": end},
+            start_date=start_date,
+            end_date=end_date,
+            document_id=document_id,
         )
 
     def get_daily_cardiovascular_age(
@@ -1364,18 +1274,11 @@ class OuraClient:
                         "pulse_wave_velocity": 7.2
                     }
         """
-        start, end = self._format_dates(start_date, end_date)
-
-        if document_id:
-            return self._make_request(
-                method="GET",
-                url_slug=f"v2/usercollection/daily_cardiovascular_age/{document_id}",
-            )
-
-        return self._make_paginated_request(
-            method="GET",
+        return self._get_date_collection(
             url_slug="v2/usercollection/daily_cardiovascular_age",
-            params={"start_date": start, "end_date": end},
+            start_date=start_date,
+            end_date=end_date,
+            document_id=document_id,
         )
 
     def get_vo2_max(
@@ -1427,18 +1330,11 @@ class OuraClient:
                         "vo2_max": 48
                     }
         """
-        start, end = self._format_dates(start_date, end_date)
-
-        if document_id:
-            return self._make_request(
-                method="GET",
-                url_slug=f"v2/usercollection/vO2_max/{document_id}",
-            )
-
-        return self._make_paginated_request(
-            method="GET",
+        return self._get_date_collection(
             url_slug="v2/usercollection/vO2_max",
-            params={"start_date": start, "end_date": end},
+            start_date=start_date,
+            end_date=end_date,
+            document_id=document_id,
         )
 
     def get_ring_battery_level(
@@ -1463,7 +1359,8 @@ class OuraClient:
             end_datetime (str, optional): The latest datetime for which to get data.
                 Expected in ISO 8601 format (`YYYY-MM-DDThh:mm:ss`). Time is optional
                 and defaults to 00:00:00; time zone is supported. Defaults to now.
-            latest (bool, optional): If true, request only the most recent sample.
+            latest (bool, optional): If true, request only the most recent sample
+                and ignore datetime filters. False or None selects a datetime range.
 
         Returns:
             list[dict[str, Any]]: Response JSON data loaded into an object.
@@ -1495,13 +1392,50 @@ class OuraClient:
     ####################################################################################
     # HELPER METHODS
 
+    def _get_date_collection(
+        self,
+        url_slug: str,
+        start_date: str | None,
+        end_date: str | None,
+        document_id: str | None,
+    ) -> list[dict[str, Any]] | dict[str, Any]:
+        """Select document lookup before validating collection-only date filters."""
+        if document_id:
+            return self._make_request(
+                method="GET", url_slug=f"{url_slug}/{document_id}"
+            )
+
+        start, end = self._format_dates(start_date, end_date)
+        return self._make_paginated_request(
+            method="GET",
+            url_slug=url_slug,
+            params={"start_date": start, "end_date": end},
+        )
+
     def _make_paginated_request(
         self, method: str, url_slug: str, **kwargs: Any
     ) -> list[dict[str, Any]]:
-        params = kwargs.pop("params", {})
+        """Collect pages until the cursor is empty; never request a cursor twice.
+
+        Pagination state belongs to this call. Caller parameters and parameters
+        passed to earlier requests remain unchanged.
+
+        Raises:
+            RuntimeError: If the API returns a cursor already requested in this call.
+        """
+        params = dict(kwargs.pop("params", None) or {})
         response_data: list[dict[str, Any]] = []
+        requested_tokens: set[str] = set()
 
         while True:
+            if token := params.get("next_token"):
+                if token in requested_tokens:
+                    raise RuntimeError(
+                        "Pagination cursor repeated; refusing to request the same "
+                        "page again."
+                    )
+                requested_tokens.add(token)
+
             response = self._make_request(
                 method=method,
                 url_slug=url_slug,
@@ -1511,13 +1445,10 @@ class OuraClient:
 
             response_data += response["data"]
 
-            if next_token := response["next_token"]:
-                params["next_token"] = next_token
+            if not (next_token := response["next_token"]):
+                return response_data
 
-            else:
-                break
-
-        return response_data
+            params = {**params, "next_token": next_token}
 
     def _make_request(
         self, method: str, url_slug: str, **kwargs: Any

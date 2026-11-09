@@ -1,6 +1,6 @@
 [project]
 name = "oura-ring"
-version = "1.0.1"
+version = "1.0.2"
 description = "Python client for the Oura API v2 with OAuth2 support."
 readme = "README.md"
 license = { text = "MIT" }
@@ -35,7 +35,6 @@ packages = ["oura_ring"]
 [dependency-groups]
 dev = [
     "pytest>=8",
-    "pytest-recording>=0.13",
     "coverage[toml]>=7",
     "ruff>=0.6",
     "mypy>=1.11",

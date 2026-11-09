@@ -61,7 +61,8 @@ url = oauth.authorize_url(
 # redirect the user to `url`...
 
 # 2. Oura redirects back to your callback with a `?code=...` query param.
-#    Exchange that code for tokens.
+#    Verify the returned state matches your stored CSRF value before exchanging
+#    that code for tokens.
 tokens = oauth.exchange_code(code, redirect_uri="https://yourapp.com/callback")
 
 # 3. Create a client with the access token.
@@ -149,6 +150,17 @@ client = OuraClient(token)
 There are 19 different API requests that `OuraClient` can make. Full Oura API v2 documentation can be found on [Oura's website](https://cloud.ouraring.com/v2/docs).
 
 > **Scope and limitations (by design):** the client returns the API's JSON as-is and raises on HTTP errors (including expired tokens and `429` rate limits) — there is no automatic token refresh or retry built in; use `OuraAuth.refresh_token` to rotate tokens. The optional `fields` (sparse fieldsets) query param and the webhook subscription API are intentionally not exposed.
+
+For endpoints accepting `document_id`, a nonempty ID selects a single-document
+lookup and returns a dictionary. Date filters are ignored in this mode. Without
+an ID, the client returns a list collected across all pages. Heart rate and ring
+battery requests use `latest=True` to select the latest sample and ignore datetime
+filters; `False` or `None` selects a datetime range.
+
+Pagination follows continuation tokens even when a page is empty. A repeated
+cursor raises `RuntimeError` before the same page is requested again. HTTP,
+transport, and JSON errors propagate to the caller; partial results are not
+returned. Pagination never changes the caller's query parameters.
 
 ### Get Personal Info
 

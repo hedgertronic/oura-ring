@@ -10,6 +10,7 @@ from datetime import date, timedelta
 from unittest.mock import MagicMock, patch
 
 import pytest
+import requests
 
 from oura_ring import API_URL, OuraClient
 
@@ -60,6 +61,17 @@ def test_context_manager_returns_client_and_closes():
     client.session.close = MagicMock()
     with client as entered:
         assert entered is client
+    client.session.close.assert_called_once()
+
+
+def test_context_manager_closes_and_propagates_body_failure():
+    client = OuraClient(FAKE_TOKEN)
+    client.session.close = MagicMock()
+    error = RuntimeError("body failed")
+    with pytest.raises(RuntimeError) as caught, client:
+        raise error
+
+    assert caught.value is error
     client.session.close.assert_called_once()
 
 
@@ -163,7 +175,7 @@ def test_paginated_request_follows_next_token_and_concatenates():
     ]
 
     def side_effect(*args, **kwargs):
-        # Snapshot params at call time; the client mutates the dict in place.
+        # Snapshot each request's parameters for transition assertions.
         captured_params.append(dict(kwargs.get("params") or {}))
         return responses[len(captured_params) - 1]
 
@@ -179,6 +191,127 @@ def test_paginated_request_follows_next_token_and_concatenates():
     # First call has no next_token; second carries the token from page 1.
     assert "next_token" not in captured_params[0]
     assert captured_params[1]["next_token"] == "tok-abc"
+
+
+@pytest.mark.parametrize("terminal_token", [None, ""])
+def test_paginated_request_empty_page_can_have_a_continuation(terminal_token):
+    client = OuraClient(FAKE_TOKEN)
+    with patch("requests.Session.request") as mock_request:
+        mock_request.side_effect = [
+            _response(_page([], next_token="next")),
+            _response(_page([{"id": "last"}], next_token=terminal_token)),
+        ]
+        result = client._make_paginated_request("GET", "v2/foo")
+
+    assert result == [{"id": "last"}]
+    assert mock_request.call_count == 2
+
+
+@pytest.mark.parametrize(
+    "initial_token,returned_tokens",
+    [(None, ["a", "a"]), (None, ["a", "b", "a"]), ("a", ["a"])],
+)
+def test_paginated_request_rejects_cursor_cycles(initial_token, returned_tokens):
+    client = OuraClient(FAKE_TOKEN)
+    params = {"next_token": initial_token} if initial_token else {}
+    with patch("requests.Session.request") as mock_request:
+        mock_request.side_effect = [
+            _response(_page([{"id": "page"}], next_token=token))
+            for token in returned_tokens
+        ]
+        with pytest.raises(RuntimeError, match="Pagination cursor repeated"):
+            client._make_paginated_request("GET", "v2/foo", params=params)
+
+    assert mock_request.call_count == len(returned_tokens)
+
+
+def test_paginated_request_keeps_caller_and_prior_page_params_unchanged():
+    client = OuraClient(FAKE_TOKEN)
+    params = {"start_date": "2024-01-01", "next_token": "resume"}
+    with patch("requests.Session.request") as mock_request:
+        mock_request.side_effect = [
+            _response(_page([{"id": "first"}], next_token="next")),
+            _response(_page([{"id": "last"}])),
+        ]
+        result = client._make_paginated_request("GET", "v2/foo", params=params)
+
+    assert result == [{"id": "first"}, {"id": "last"}]
+    assert params == {"start_date": "2024-01-01", "next_token": "resume"}
+    first, second = mock_request.call_args_list
+    assert first.kwargs["params"] == params
+    assert second.kwargs["params"] == {
+        "start_date": "2024-01-01",
+        "next_token": "next",
+    }
+
+
+def test_paginated_request_cursor_history_is_local_to_each_call():
+    client = OuraClient(FAKE_TOKEN)
+    params = {"start_date": "2024-01-01"}
+    with patch("requests.Session.request") as mock_request:
+        mock_request.side_effect = [
+            _response(_page([], next_token="next")),
+            _response(_page([{"id": "last"}])),
+            _response(_page([], next_token="next")),
+            _response(_page([{"id": "last"}])),
+        ]
+        for _ in range(2):
+            assert client._make_paginated_request("GET", "v2/foo", params=params) == [
+                {"id": "last"}
+            ]
+
+    assert mock_request.call_count == 4
+    assert params == {"start_date": "2024-01-01"}
+
+
+def test_paginated_request_with_none_params_and_no_data():
+    client = OuraClient(FAKE_TOKEN)
+    with patch("requests.Session.request") as mock_request:
+        mock_request.return_value = _response(_page([]))
+        assert client._make_paginated_request("GET", "v2/foo", params=None) == []
+
+    mock_request.assert_called_once()
+    assert mock_request.call_args.kwargs["params"] == {}
+
+
+@pytest.mark.parametrize("status_code", [401, 403, 429, 500])
+def test_paginated_request_propagates_later_http_failure_without_retry(status_code):
+    client = OuraClient(FAKE_TOKEN)
+    failed_response = requests.Response()
+    failed_response.status_code = status_code
+    with patch("requests.Session.request") as mock_request:
+        mock_request.side_effect = [
+            _response(_page([{"id": "first"}], next_token="next")),
+            failed_response,
+        ]
+        with pytest.raises(requests.HTTPError) as caught:
+            client._make_paginated_request("GET", "v2/foo")
+
+    assert caught.value.response is failed_response
+    assert mock_request.call_count == 2
+
+
+@pytest.mark.parametrize("failure", ["transport", "json"])
+def test_paginated_request_propagates_later_transport_or_json_failure(failure):
+    client = OuraClient(FAKE_TOKEN)
+    if failure == "transport":
+        error = requests.Timeout("request timed out")
+        second_response = error
+    else:
+        error = requests.exceptions.JSONDecodeError("invalid JSON", "", 0)
+        second_response = _response({})
+        second_response.json.side_effect = error
+
+    with patch("requests.Session.request") as mock_request:
+        mock_request.side_effect = [
+            _response(_page([{"id": "first"}], next_token="next")),
+            second_response,
+        ]
+        with pytest.raises(type(error)) as caught:
+            client._make_paginated_request("GET", "v2/foo")
+
+    assert caught.value is error
+    assert mock_request.call_count == 2
 
 
 # ----------------------------------------------------------------------------------
@@ -235,6 +368,36 @@ def test_date_endpoint_document_id_path(method_name, slug):
     assert kwargs["url"] == f"{API_URL}/{slug}/test-id-1"
     # document_id path is a single request without date params.
     assert "params" not in kwargs
+
+
+@pytest.mark.parametrize("method_name,slug", DATE_ENDPOINT_TABLE)
+@pytest.mark.parametrize(
+    "start,end",
+    [("invalid", "also-invalid"), ("2024-02-01", "2024-01-01")],
+)
+def test_date_endpoint_document_mode_ignores_dates(method_name, slug, start, end):
+    client = OuraClient(FAKE_TOKEN)
+    with patch("requests.Session.request") as mock_request:
+        mock_request.return_value = _response({"id": "document"})
+        result = getattr(client, method_name)(
+            start_date=start, end_date=end, document_id="document"
+        )
+
+    assert result == {"id": "document"}
+    mock_request.assert_called_once()
+    assert mock_request.call_args.kwargs["url"] == f"{API_URL}/{slug}/document"
+    assert "params" not in mock_request.call_args.kwargs
+
+
+@pytest.mark.parametrize("method_name,slug", DATE_ENDPOINT_TABLE)
+def test_date_endpoint_collection_mode_rejects_reversed_dates(method_name, slug):
+    client = OuraClient(FAKE_TOKEN)
+    with (
+        patch("requests.Session.request") as mock_request,
+        pytest.raises(ValueError, match="Start date greater than end date"),
+    ):
+        getattr(client, method_name)(start_date="2024-02-01", end_date="2024-01-01")
+    mock_request.assert_not_called()
 
 
 def test_get_ring_configuration_list_has_no_date_params():
@@ -340,6 +503,42 @@ def test_datetime_endpoint_latest_param(method_name, slug):
     kwargs = mock_request.call_args.kwargs
     assert kwargs["url"] == f"{API_URL}/{slug}"
     assert kwargs["params"] == {"latest": True}
+
+
+@pytest.mark.parametrize("method_name,slug", DATETIME_ENDPOINT_TABLE)
+def test_datetime_endpoint_latest_mode_ignores_datetime_filters(method_name, slug):
+    client = OuraClient(FAKE_TOKEN)
+    with patch("requests.Session.request") as mock_request:
+        mock_request.return_value = _response(_page([]))
+        assert (
+            getattr(client, method_name)(
+                latest=True, start_datetime="invalid", end_datetime="also-invalid"
+            )
+            == []
+        )
+
+    mock_request.assert_called_once()
+    assert mock_request.call_args.kwargs["params"] == {"latest": True}
+
+
+@pytest.mark.parametrize("method_name,slug", DATETIME_ENDPOINT_TABLE)
+@pytest.mark.parametrize("latest", [False, None])
+def test_datetime_endpoint_false_or_none_latest_uses_range(method_name, slug, latest):
+    client = OuraClient(FAKE_TOKEN)
+    with patch("requests.Session.request") as mock_request:
+        mock_request.return_value = _response(_page([]))
+        assert (
+            getattr(client, method_name)(
+                start_datetime="2024-01-01", end_datetime="2024-01-02", latest=latest
+            )
+            == []
+        )
+
+    mock_request.assert_called_once()
+    assert mock_request.call_args.kwargs["params"] == {
+        "start_datetime": "2024-01-01 00:00:00",
+        "end_datetime": "2024-01-02 00:00:00",
+    }
 
 
 # ----------------------------------------------------------------------------------

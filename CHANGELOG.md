@@ -4,6 +4,15 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2]
+
+### Fixed
+- Endpoints that accept `document_id` no longer validate or send date filters on a single-document lookup.
+- Pagination raises `RuntimeError` if the API repeats a `next_token` instead of looping forever, and no longer mutates the caller's query parameters.
+
+### Changed
+- The 15 date-filtered endpoints share one request helper.
+
 ## [1.0.1]
 
 ### Changed
